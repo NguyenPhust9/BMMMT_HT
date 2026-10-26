@@ -1,0 +1,15 @@
+{
+  "test_id": "T-36",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:33.547194+00:00",
+  "actual": "Voi enforce_csrf_checks=True: POST thieu CSRF bi HTTP 403, Origin la bi HTTP 403, dung CSRF+Origin hop le tra HTTP 201; GET tren /submit, /approve, /execute-simulated deu tra HTTP 405.",
+  "details": {
+    "missing_csrf_http": 403,
+    "bad_origin_http": 403,
+    "valid_csrf_http": 201,
+    "get_submit_http": 405,
+    "get_approve_http": 405,
+    "get_execute_http": 405
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "test_id": "T-08",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:26.655175+00:00",
+  "actual": "Lan truy cap R2 cua Minh bi chan tren moi endpoint: detail=403, revise=403, cancel=403, receipt=403; khong ro ri noi dung R2.",
+  "details": {
+    "detail_http": 403,
+    "revise_http": 403,
+    "cancel_http": 403,
+    "receipt_http": 403
+  }
+}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Tạo yêu cầu thanh toán — SecurePay{% endblock %}
+{% block content %}
+<div class="form-page-card">
+  <p class="eyebrow">YÊU CẦU MỚI</p>
+  <h2>Tạo yêu cầu thanh toán</h2>
+  <div class="alert alert-info">Chỉ chọn người thụ hưởng đã được xác minh. Yêu cầu sau khi gửi cần Giám đốc và Kiểm soát viên cùng phê duyệt.</div>
+
+  <form method="post" action="/requests" id="create-request-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_beneficiary_version_id">Người thụ hưởng</label>
+      <select name="beneficiary_version_id" id="id_beneficiary_version_id" class="form-control" required>
+        <option value="">-- Chọn người thụ hưởng đã xác minh --</option>
+        {% for ver in verified_versions %}
+          <option value="{{ ver.id }}">
+            {{ ver.beneficiary.code }} (v{{ ver.version_number }}) — {{ ver.vendor_name }} | {{ ver.bank_name }} | STK: {{ ver.account_number }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="id_amount_vnd">Số tiền (VND)</label>
+      <input type="number" name="amount_vnd" id="id_amount_vnd" class="form-control mono" min="1" max="1000000000000" step="1" required placeholder="Ví dụ: 20000000">
+    </div>
+
+    <div class="form-group">
+      <label for="id_purpose">Nội dung thanh toán</label>
+      <input type="text" name="purpose" id="id_purpose" class="form-control" maxlength="500" required placeholder="Thanh toán đợt 1 theo hợp đồng thiết bị mạng...">
+    </div>
+
+    <div class="form-group">
+      <label for="id_source_kind">Nguồn yêu cầu</label>
+      <select name="source_kind" id="id_source_kind" class="form-control">
+        {% for val, label in source_kinds %}
+          <option value="{{ val }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="id_source_excerpt">
+        Nội dung yêu cầu gốc
+        <span class="badge badge-unverified">Nguồn ngoài — chưa xác minh</span>
+      </label>
+      <textarea name="source_excerpt" id="id_source_excerpt" rows="3" class="form-control" maxlength="2000" placeholder="Dán nội dung tin nhắn/email nhận được để người duyệt đối chiếu độc lập (luôn được escape an toàn)..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" name="submit_immediately" value="1" checked>
+        Gửi phê duyệt ngay sau khi tạo
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="btn-submit-request">Tạo yêu cầu</button>
+    <a href="/requests" class="btn btn-ghost">Hủy</a>
+  </form>
+</div>
+{% endblock %}
+

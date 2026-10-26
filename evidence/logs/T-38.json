@@ -1,0 +1,14 @@
+{
+  "test_id": "T-38",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:37.908509+00:00",
+  "actual": "Lan khong thay su kien cua Minh tren /audit; SecurityAdmin An chi thay metadata da loc (khong co amount_vnd/beneficiary_account); POST/DELETE /audit bi chan HTTP 403; quet toan bo AuditEvent khong chua secret_marker hay TOTP seed.",
+  "details": {
+    "lan_event_count": 0,
+    "an_event_count": 10,
+    "post_audit_http": 403,
+    "delete_audit_http": 403,
+    "secret_marker_found": false
+  }
+}

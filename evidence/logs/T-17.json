@@ -1,0 +1,13 @@
+{
+  "test_id": "T-17",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:48.379953+00:00",
+  "actual": "Challenge APPROVE_DIRECTOR R1 dung sang R2 bi HTTP 409 (WRONG_SCOPE); dung sang REJECT R1 bi HTTP 409 (WRONG_SCOPE).",
+  "details": {
+    "wrong_request_http": 409,
+    "wrong_request_reason": "WRONG_SCOPE",
+    "wrong_action_http": 409,
+    "wrong_action_reason": "WRONG_SCOPE"
+  }
+}

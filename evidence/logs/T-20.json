@@ -1,0 +1,14 @@
+{
+  "test_id": "T-20",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:54.257400+00:00",
+  "actual": "Lan tao revision 2 dua yeu cau ve DRAFT; phieu duyet rev 1 cua Nam chuyen sang status='SUPERSEDED_BY_REVISION', challenge cua Huong co invalidated_at != None; thu dung lai challenge cu cho rev 2 bi HTTP 409 (WRONG_SCOPE).",
+  "details": {
+    "new_revision_number": 2,
+    "status_after_revise": "DRAFT",
+    "old_approval_status": "SUPERSEDED_BY_REVISION",
+    "old_challenge_invalidated": true,
+    "use_old_challenge_http": 409
+  }
+}

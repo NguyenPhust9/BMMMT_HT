@@ -1,0 +1,118 @@
+{% extends "base.html" %}{% load static %}
+{% block title %}Người thụ hưởng — SecurePay{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">DANH MỤC THANH TOÁN</p><h1>Người thụ hưởng</h1><p class="page-subtitle">Đề nghị, xác minh và quản lý tài khoản nhận tiền.</p></div>{% if current_role == "REQUESTER" %}<button class="btn btn-primary" type="button" onclick="document.getElementById('new-beneficiary').open=true">＋ Thêm người thụ hưởng</button>{% endif %}</section>
+{% if current_role == "REQUESTER" %}
+<details class="card beneficiary-form" id="new-beneficiary">
+  <summary>Thông tin người thụ hưởng mới</summary>
+  <form method="post" action="/beneficiaries/new" autocomplete="off">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="form-group"><label>Tên đơn vị hoặc cá nhân</label><input class="form-control" name="vendor_name" autocomplete="organization" required></div>
+      <div class="form-group"><label>Ngân hàng</label><details class="bank-picker"><summary><span class="bank-placeholder"><i class="fa-solid fa-building-columns"></i> Chọn ngân hàng</span><i class="fa-solid fa-chevron-down"></i></summary><div class="bank-options">
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)" required><span><img src="{% static 'vendor/banks/VCB.png' %}" alt=""><b>Vietcombank</b><small>VCB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Công thương Việt Nam (VietinBank)"><span><img src="{% static 'vendor/banks/ICB.png' %}" alt=""><b>VietinBank</b><small>ICB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)"><span><img src="{% static 'vendor/banks/BIDV.png' %}" alt=""><b>BIDV</b><small>BIDV</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)"><span><img src="{% static 'vendor/banks/VBA.png' %}" alt=""><b>Agribank</b><small>VBA</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)"><span><img src="{% static 'vendor/banks/TCB.png' %}" alt=""><b>Techcombank</b><small>TCB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Quân đội (MB)"><span><img src="{% static 'vendor/banks/MB.png' %}" alt=""><b>MB Bank</b><small>MB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Á Châu (ACB)"><span><img src="{% static 'vendor/banks/ACB.png' %}" alt=""><b>ACB</b><small>ACB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)"><span><img src="{% static 'vendor/banks/VPB.png' %}" alt=""><b>VPBank</b><small>VPB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)"><span><img src="{% static 'vendor/banks/STB.png' %}" alt=""><b>Sacombank</b><small>STB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Tiên Phong (TPBank)"><span><img src="{% static 'vendor/banks/TPB.png' %}" alt=""><b>TPBank</b><small>TPB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Quốc tế Việt Nam (VIB)"><span><img src="{% static 'vendor/banks/VIB.png' %}" alt=""><b>VIB</b><small>VIB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Sài Gòn – Hà Nội (SHB)"><span><img src="{% static 'vendor/banks/SHB.png' %}" alt=""><b>SHB</b><small>SHB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Phát triển TP.HCM (HDBank)"><span><img src="{% static 'vendor/banks/HDB.png' %}" alt=""><b>HDBank</b><small>HDB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Phương Đông (OCB)"><span><img src="{% static 'vendor/banks/OCB.png' %}" alt=""><b>OCB</b><small>OCB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Hàng Hải Việt Nam (MSB)"><span><img src="{% static 'vendor/banks/MSB.png' %}" alt=""><b>MSB</b><small>MSB</small></span></label>
+        <label><input type="radio" name="bank_name" value="Ngân hàng TMCP Đông Nam Á (SeABank)"><span><img src="{% static 'vendor/banks/SEAB.png' %}" alt=""><b>SeABank</b><small>SEAB</small></span></label>
+      </div></details></div>
+      <div class="form-group"><label>Số tài khoản</label><input class="form-control mono" name="account_number" inputmode="numeric" pattern="[0-9]{6,30}" maxlength="30" autocomplete="new-password" data-lpignore="true" data-1p-ignore="true" placeholder="Nhập 6–30 chữ số" required></div>
+      <div class="form-group reference-group">
+        <label>Loại căn cứ xác minh</label>
+        <select class="form-control" name="reference_type" required>
+          <option value="" selected disabled>Chọn loại căn cứ</option>
+          <option value="Hợp đồng">Hợp đồng</option>
+          <option value="Hóa đơn">Hóa đơn</option>
+          <option value="Biên bản xác nhận">Biên bản xác nhận</option>
+          <option value="Xác nhận của ngân hàng">Xác nhận của ngân hàng</option>
+          <option value="Xác nhận trực tiếp">Xác nhận trực tiếp với người thụ hưởng</option>
+          <option value="Khác">Khác</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Số hoặc mã tham chiếu</label><input class="form-control" name="reference_code" autocomplete="off" placeholder="Ví dụ: HD-2026-015" maxlength="100" required><small class="field-help">Nhập số hợp đồng, hóa đơn, biên bản hoặc mã xác nhận.</small></div>
+      <div class="form-group reference-note"><label>Thông tin bổ sung <span>(không bắt buộc)</span></label><input class="form-control" name="reference_note" autocomplete="off" placeholder="Ví dụ: ký ngày 20/10/2026, liên hệ Nguyễn Thị Mai" maxlength="150"></div>
+    </div>
+    <div class="alert alert-warning">Người thụ hưởng mới sẽ ở trạng thái <strong>Chờ xác minh</strong> và chưa thể dùng để tạo thanh toán.</div>
+    <button class="btn btn-primary">Gửi đề nghị xác minh</button>
+  </form>
+</details>
+{% endif %}
+<div class="data-card standard-data-card">
+  <div class="alert alert-info">
+    Danh mục này chỉ hiển thị để lựa chọn. Việc thay đổi tài khoản nhận tiền cần được đối chiếu độc lập trước khi cập nhật.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Mã người nhận</th>
+        <th>Trạng thái danh mục</th>
+        <th>Phiên bản đang dùng</th>
+        <th>Tên đơn vị thụ hưởng</th>
+        <th>Ngân hàng & Số tài khoản</th>
+        <th>Căn cứ đối chiếu độc lập</th>
+        {% if current_role == "CONTROLLER" %}<th>Xử lý</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in beneficiaries %}
+      <tr>
+        <td class="mono"><strong>{{ b.code }}</strong></td>
+        <td>
+          {% if b.status == "VERIFIED" %}
+            <span class="badge badge-approved">Đã xác minh</span>
+          {% elif b.status == "PENDING" %}
+            <span class="badge badge-unverified">Chờ xác minh</span>
+          {% else %}
+            <span class="badge badge-danger">Đã thu hồi</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if b.active_version %}
+            <code>v{{ b.active_version.version_number }}</code>
+          {% else %}
+            <em>Chưa có</em>
+          {% endif %}
+        </td>
+        <td>
+          {% if b.active_version %}
+            <strong>{{ b.active_version.vendor_name }}</strong>
+          {% else %}
+            {{ b.versions.first.vendor_name }}
+          {% endif %}
+        </td>
+        <td class="mono">
+          {% if b.active_version %}
+            {{ b.active_version.bank_name }}<br>STK: <strong>{{ b.active_version.account_number }}</strong>
+          {% else %}
+            {{ b.versions.first.bank_name }}<br>STK: {{ b.versions.first.account_number }}
+          {% endif %}
+        </td>
+        <td>
+          {% if b.active_version %}
+            {{ b.active_version.verification_reference }}<br>
+            <small>{{ b.active_version.verified_by_summary }}</small>
+          {% else %}
+            {{ b.versions.first.verification_reference }}
+          {% endif %}
+        </td>
+        {% if current_role == "CONTROLLER" %}<td>{% if b.status == "PENDING" %}<form method="post" action="/beneficiaries/{{ b.id }}/review" class="review-form">{% csrf_token %}<input class="form-control" name="review_note" placeholder="Căn cứ hoặc lý do" required><div><button class="btn btn-success" name="decision" value="approve">Xác minh</button><button class="btn btn-danger" name="decision" value="reject">Từ chối</button></div></form>{% else %}<span class="muted-text">Đã xử lý</span>{% endif %}</td>{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>document.querySelectorAll('.bank-picker input').forEach(function(input){input.addEventListener('change',function(){var picker=this.closest('.bank-picker');var card=this.nextElementSibling.cloneNode(true);card.classList.add('bank-selected');picker.querySelector('summary .bank-placeholder').replaceChildren(card);picker.removeAttribute('open');});});</script>
+{% endblock %}
+

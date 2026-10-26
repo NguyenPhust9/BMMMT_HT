@@ -1,0 +1,14 @@
+{
+  "test_id": "T-15",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:43.706552+00:00",
+  "actual": "SecurityAdmin dinh chi Nam -> R1 chuyen sang HOLD, phieu cu bi INVALIDATED_BY_INCIDENT; thu mo lai quyen qua HTTP /unsuspend bi chan 403; chay CLI tin cay recover_principal tang security_epoch tu 1 -> 3, phien cu bi chan HTTP 401, phieu cu khong tu hoi sinh.",
+  "details": {
+    "epoch_initial": 1,
+    "epoch_after_recovery": 3,
+    "request_status": "HOLD",
+    "approval_status": "INVALIDATED_BY_INCIDENT",
+    "old_session_http": 401
+  }
+}

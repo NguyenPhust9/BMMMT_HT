@@ -1,0 +1,7 @@
+{
+  "name": "securepay-lab-ui",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0"
+  }
+}

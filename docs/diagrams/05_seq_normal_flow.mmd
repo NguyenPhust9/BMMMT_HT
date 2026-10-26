@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor Lan as Lan (REQUESTER)
+    actor Nam as Nam (DIRECTOR)
+    actor Huong as Hương (CONTROLLER)
+    participant Web as Django Server (Services)
+    participant DB as PostgreSQL + SecurityMutex(1)
+
+    Lan->>Web: POST /requests (Chọn Beneficiary B1 VERIFIED, 20.000.000 VND)
+    Web->>DB: Lock Mutex(1) -> Tạo PaymentRequest + Revision 1 (DRAFT)
+    Lan->>Web: POST /requests/{id}/submit
+    Web->>DB: Lock Mutex(1) -> Đóng băng Snapshot + SHA-256 Digest + PENDING_APPROVAL
+
+    Nam->>Web: POST /requests/{id}/challenges (action=APPROVE_DIRECTOR)
+    Web->>DB: Lock Mutex(1) -> Cấp Challenge C_Nam (TTL 120s, gắn rev1 & digest)
+    Nam->>Web: POST /requests/{id}/approve (C_Nam + TOTP mới của Nam)
+    Web->>DB: Lock Mutex(1) -> Kiểm tra TOTP (last_t), consume C_Nam, tạo Approval(DIRECTOR)
+
+    Note over Lan,Web: Lan thử thực thi sớm khi mới có 1/2 phiếu (T-02)
+    Lan->>Web: POST /requests/{id}/execute-simulated
+    Web->>DB: Lock Mutex(1) -> Kiểm tra thấy thiếu slot CONTROLLER -> Ghi Audit DENIED
+    Web-->>Lan: 409 MISSING_APPROVAL (Chặn thực thi)
+
+    Huong->>Web: POST /requests/{id}/challenges (action=APPROVE_CONTROLLER)
+    Web->>DB: Lock Mutex(1) -> Cấp Challenge C_Huong (TTL 120s, gắn rev1 & digest)
+    Huong->>Web: POST /requests/{id}/approve (C_Huong + TOTP mới của Hương)
+    Web->>DB: Lock Mutex(1) -> Kiểm tra person_id độc lập + TOTP, tạo Approval(CONTROLLER) -> APPROVED
+
+    Lan->>Web: POST /requests/{id}/challenges (action=EXECUTE)
+    Web->>DB: Lock Mutex(1) -> Cấp Challenge C_Exec (TTL 120s, gắn rev1 & digest)
+    Lan->>Web: POST /requests/{id}/execute-simulated (C_Exec + TOTP mới của Lan + Idempotency-Key K1)
+    Web->>DB: Lock Mutex(1) -> Final Gate Đạt -> Tạo 1 PaymentExecution + EXECUTED_SIMULATED + Audit SUCCESS
+    Web-->>Lan: 200 OK (Biên nhận MÔ PHỎNG SIM-RCPT-...)
+

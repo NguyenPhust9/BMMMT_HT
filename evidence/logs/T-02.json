@@ -1,0 +1,14 @@
+{
+  "test_id": "T-02",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:13.806192+00:00",
+  "actual": "Khi moi co 1 phieu cua Nam, API xin EXECUTE challenge tra HTTP 409 (MISSING_APPROVAL) va goi thang execute-simulated tra HTTP 409 (MISSING_APPROVAL); Approval count=1, PaymentExecution count=0.",
+  "details": {
+    "challenge_issue_http": 409,
+    "execute_direct_http": 409,
+    "execute_reason_code": "MISSING_APPROVAL",
+    "approval_count": 1,
+    "execution_count": 0
+  }
+}

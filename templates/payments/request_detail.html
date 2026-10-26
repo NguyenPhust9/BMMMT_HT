@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ payment_request.request_code }} — SecurePay{% endblock %}
+{% block content %}
+<a href="/requests" class="back-link">← Quay lại danh sách</a>
+
+<section class="detail-header">
+  <div>
+    <div class="detail-kicker"><span>{{ payment_request.request_code }}</span><span>•</span><span>Phiên bản {{ current_revision.revision_number }}</span></div>
+    <h1>Đề nghị thanh toán</h1>
+    <p>Tạo bởi {{ payment_request.requester.display_name }} · {{ payment_request.created_at|date:"H:i, d/m/Y" }}</p>
+  </div>
+  {% if payment_request.status == "DRAFT" %}<span class="status status-draft status-lg">Bản nháp</span>
+  {% elif payment_request.status == "PENDING_APPROVAL" %}<span class="status status-pending status-lg">Đang chờ duyệt · {{ active_approvals_count }}/2</span>
+  {% elif payment_request.status == "APPROVED" %}<span class="status status-approved status-lg">Đã phê duyệt</span>
+  {% elif payment_request.status == "EXECUTED_SIMULATED" %}<span class="status status-completed status-lg">Đã thực hiện</span>
+  {% elif payment_request.status == "HOLD" %}<span class="status status-hold status-lg">Đang tạm giữ</span>
+  {% elif payment_request.status == "REJECTED" %}<span class="status status-rejected status-lg">Đã từ chối</span>
+  {% else %}<span class="status status-rejected status-lg">{{ payment_request.get_status_display }}</span>{% endif %}
+</section>
+
+{% if payment_request.status == "HOLD" %}<div class="alert alert-danger"><strong>Yêu cầu đang tạm giữ.</strong> {{ payment_request.hold_reason }}</div>{% endif %}
+{% if payment_request.status == "REJECTED" %}<div class="alert alert-danger"><strong>Yêu cầu đã bị từ chối.</strong> {{ payment_request.rejection_reason }}</div>{% endif %}
+{% if current_revision.revision_number > 1 and active_approvals_count < 2 and payment_request.status != "EXECUTED_SIMULATED" %}<div class="alert alert-warning"><strong>Nội dung đã được chỉnh sửa.</strong> Các phê duyệt của phiên bản trước không còn hiệu lực.</div>{% endif %}
+
+<div class="detail-layout">
+  <main class="detail-main">
+    <section class="payment-hero">
+      <span class="field-label">TỔNG GIÁ TRỊ THANH TOÁN</span>
+      <div class="hero-amount" id="snapshot-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ current_revision.amount_vnd }} <small>{{ current_revision.currency }}</small>{% endif %}</div>
+      <div class="hero-purpose" id="snapshot-purpose">{{ current_revision.purpose }}</div>
+    </section>
+
+    <section class="detail-card">
+      <div class="section-title"><div><span class="section-icon">↗</span><div><h2>Thông tin nhận tiền</h2><p>Đã đối chiếu với danh mục người thụ hưởng</p></div></div><span class="verified-chip">✓ Đã xác minh</span></div>
+      <div class="beneficiary-block" id="snapshot-beneficiary">
+        <div class="company-avatar">{{ current_revision.beneficiary_name_snapshot|slice:":1" }}</div>
+        <div><strong>{% if current_role == "SECURITY_ADMIN" %}Thông tin đã ẩn{% else %}{{ current_revision.beneficiary_name_snapshot }}{% endif %}</strong><p>{{ current_revision.beneficiary.code }}</p></div>
+      </div>
+      <div class="info-grid" id="snapshot-account">
+        <div><span>Ngân hàng</span><strong>{% if current_role == "SECURITY_ADMIN" %}—{% else %}{{ current_revision.bank_name_snapshot }}{% endif %}</strong></div>
+        <div><span>Số tài khoản</span><strong class="mono">{% if current_role == "SECURITY_ADMIN" %}—{% else %}{{ current_revision.account_number_snapshot }}{% endif %}</strong></div>
+      </div>
+    </section>
+
+    <section class="detail-card">
+      <div class="section-title"><div><span class="section-icon">✓</span><div><h2>Tiến độ phê duyệt</h2><p>Cần đủ hai cấp trước khi thực hiện</p></div></div><strong>{{ active_approvals_count }}/2</strong></div>
+      <div class="approval-timeline">
+        <div class="timeline-item {% if director_approval %}complete{% endif %}"><span class="timeline-dot">{% if director_approval %}✓{% else %}1{% endif %}</span><div><span>GIÁM ĐỐC</span><strong>{% if director_approval %}{{ director_approval.approver.display_name }}{% else %}Chờ phê duyệt{% endif %}</strong><p>{% if director_approval %}Đã duyệt lúc {{ director_approval.created_at|date:"H:i, d/m/Y" }}{% else %}Chưa có quyết định{% endif %}</p></div></div>
+        <div class="timeline-line {% if director_approval and controller_approval %}complete{% endif %}"></div>
+        <div class="timeline-item {% if controller_approval %}complete{% endif %}"><span class="timeline-dot">{% if controller_approval %}✓{% else %}2{% endif %}</span><div><span>KIỂM SOÁT VIÊN</span><strong>{% if controller_approval %}{{ controller_approval.approver.display_name }}{% else %}Chờ phê duyệt{% endif %}</strong><p>{% if controller_approval %}Đã duyệt lúc {{ controller_approval.created_at|date:"H:i, d/m/Y" }}{% else %}Chưa có quyết định{% endif %}</p></div></div>
+      </div>
+    </section>
+
+    <section class="detail-card source-card">
+      <div class="section-title"><div><span class="section-icon">⌁</span><div><h2>Nguồn đề nghị</h2><p>{{ current_revision.get_source_kind_display }}</p></div></div><span class="unverified-chip">Chưa xác minh độc lập</span></div>
+      <blockquote id="snapshot-source-excerpt">{{ current_revision.source_excerpt|default:"Không có nội dung trích dẫn." }}</blockquote>
+    </section>
+
+    {% if execution %}
+    <section class="receipt-card"><div class="receipt-check">✓</div><div><span>THỰC HIỆN THÀNH CÔNG</span><h2>Giao dịch đã hoàn tất</h2><p>{{ execution.receipt_id }} · {{ execution.executed_at|date:"H:i, d/m/Y" }}</p></div><a href="/requests/{{ payment_request.id }}/receipt" class="btn btn-ghost">Xem biên nhận</a></section>
+    {% endif %}
+
+    <details class="detail-card technical-details">
+      <summary>Thông tin kiểm soát và lịch sử phiên bản</summary>
+      <div class="tech-grid"><div><span>Mã toàn vẹn SHA-256</span><code id="snapshot-digest">{{ current_revision.content_digest }}</code></div><div><span>Thời hạn phê duyệt</span><strong>{{ payment_request.expires_at|date:"H:i, d/m/Y"|default:"Chưa thiết lập" }}</strong></div></div>
+      <div class="history-list">{% for r in all_revisions %}<div><strong>Phiên bản {{ r.revision_number }}</strong><span>{{ r.amount_vnd }} VND · {{ r.created_at|date:"H:i, d/m/Y" }}</span></div>{% endfor %}</div>
+    </details>
+  </main>
+
+  <aside class="action-sidebar">
+    {% if current_role == "DIRECTOR" or current_role == "CONTROLLER" %}
+    <section class="action-card">
+      <span class="field-label">QUYẾT ĐỊNH CỦA BẠN</span><h2>Xem xét yêu cầu</h2><p>Kiểm tra số tiền, người nhận và nội dung trước khi xác nhận.</p>
+      <form method="post" action="/requests/{{ payment_request.id }}/challenges">{% csrf_token %}<input type="hidden" name="action" value="{% if current_role == 'DIRECTOR' %}APPROVE_DIRECTOR{% else %}APPROVE_CONTROLLER{% endif %}"><button type="submit" class="btn btn-success btn-block" id="btn-issue-approve-challenge">Phê duyệt yêu cầu</button></form>
+      <form method="post" action="/requests/{{ payment_request.id }}/challenges" class="reject-form">{% csrf_token %}<input type="hidden" name="action" value="REJECT"><input type="text" name="reason" class="form-control" placeholder="Lý do từ chối"><button type="submit" class="btn btn-danger btn-block" id="btn-issue-reject-challenge">Từ chối</button></form>
+      {% for ch in open_challenges %}<div class="otp-panel"><span>MÃ XÁC NHẬN</span><p>Mã có hiệu lực đến {{ ch.expires_at|date:"H:i:s" }}</p>{% if ch.action == "REJECT" %}<form method="post" action="/requests/{{ payment_request.id }}/reject">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="hidden" name="reason" value="{{ ch.reason_text }}"><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-danger btn-block">Xác nhận từ chối</button></form>{% else %}<form method="post" action="/requests/{{ payment_request.id }}/approve">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-success btn-block">Xác nhận phê duyệt</button></form>{% endif %}</div>{% endfor %}
+    </section>
+    {% endif %}
+
+    {% if current_role == "REQUESTER" and payment_request.requester_id == request.user.id %}
+    <section class="action-card">
+      <span class="field-label">HÀNH ĐỘNG</span><h2>Quản lý yêu cầu</h2>
+      {% if payment_request.status == "DRAFT" %}<form method="post" action="/requests/{{ payment_request.id }}/submit">{% csrf_token %}<button class="btn btn-primary btn-block" id="btn-submit-draft">Gửi phê duyệt</button></form>{% endif %}
+      {% if payment_request.status == "APPROVED" %}<form method="post" action="/requests/{{ payment_request.id }}/challenges">{% csrf_token %}<input type="hidden" name="action" value="EXECUTE"><button class="btn btn-primary btn-block" id="btn-issue-execute-challenge">Thực hiện thanh toán</button></form>{% for ch in open_challenges %}{% if ch.action == "EXECUTE" %}<form method="post" action="/requests/{{ payment_request.id }}/execute-simulated" id="execute-simulated-form" class="otp-panel">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="hidden" name="idempotency_key" value="{{ suggested_idempotency_key }}"><label>Mã OTP xác nhận</label><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-success btn-block" id="btn-execute-simulated">Xác nhận thực hiện</button></form>{% endif %}{% endfor %}{% endif %}
+      {% if not payment_request.is_terminal %}<details class="edit-details"><summary>Chỉnh sửa yêu cầu</summary><form method="post" action="/requests/{{ payment_request.id }}/revise" id="revise-request-form">{% csrf_token %}<label>Người thụ hưởng</label><select name="beneficiary_version_id" class="form-control" required>{% for ver in verified_versions %}<option value="{{ ver.id }}" {% if ver.id == current_revision.beneficiary_version_id %}selected{% endif %}>{{ ver.vendor_name }} · {{ ver.account_number }}</option>{% endfor %}</select><label>Số tiền</label><input type="number" name="amount_vnd" class="form-control" value="{{ current_revision.amount_vnd }}" min="1" required><label>Nội dung</label><input type="text" name="purpose" class="form-control" value="{{ current_revision.purpose }}" required><input type="hidden" name="source_kind" value="{{ current_revision.source_kind }}"><textarea name="source_excerpt" class="form-control" rows="2">{{ current_revision.source_excerpt }}</textarea><label class="check-row"><input type="checkbox" name="submit_immediately" value="1"> Gửi duyệt ngay</label><button class="btn btn-warning btn-block" id="btn-revise-request">Lưu phiên bản mới</button></form></details><form method="post" action="/requests/{{ payment_request.id }}/cancel" class="cancel-form">{% csrf_token %}<button class="text-danger" id="btn-cancel-request">Hủy yêu cầu</button></form>{% endif %}
+    </section>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

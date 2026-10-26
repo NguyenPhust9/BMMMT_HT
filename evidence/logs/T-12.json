@@ -1,0 +1,13 @@
+{
+  "test_id": "T-12",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:35.550915+00:00",
+  "actual": "Tai khoan Nam bi chiem toan bo chi tao duoc 1 phieu DIRECTOR; thu xin challenge APPROVE_CONTROLLER bi HTTP 403; Lan thu xin EXECUTE challenge bi HTTP 409 (MISSING_APPROVAL); PaymentExecution=0.",
+  "details": {
+    "approval_count": 1,
+    "nam_controller_attempt_http": 403,
+    "lan_execute_challenge_http": 409,
+    "execution_count": 0
+  }
+}

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 02: LUỒNG DỮ LIỆU (DFD) &amp; 4 RANH GIỚI TIN CẬY (TB-01 .. TB-04)</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Kiểm soát toàn bộ dữ liệu đi qua từng ranh giới và từ chối mặc định (Fail-Closed)</text>
+<rect x="40" y="110" width="320" height="250" rx="10" fill="#fff5f5" stroke="#c92a2a" stroke-width="2.5" />
+<text x="56" y="140" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c92a2a">TB-01: Nguồn Tin Bên Ngoài</text>
+<text x="58" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Tin nhắn giả danh Giám đốc Nam</text>
+<text x="58" y="192" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Yêu cầu đổi gấp số tài khoản nhận</text>
+<text x="58" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Không có thẩm quyền hệ thống</text>
+<text x="58" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Dữ liệu đi qua: source_excerpt</text>
+<rect x="400" y="110" width="360" height="250" rx="10" fill="#e7f5ff" stroke="#1864ab" stroke-width="2.5" />
+<text x="416" y="140" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1864ab">TB-02: Trình Duyệt / Client</text>
+<text x="418" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Gửi POST form + CSRF + Session Cookie</text>
+<text x="418" y="192" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Nhập mã TOTP 6 số từ thiết bị riêng</text>
+<text x="418" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Có thể bị sửa DOM / gửi trường thừa</text>
+<text x="418" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  (role, verified, status, approver_id)</text>
+<rect x="800" y="110" width="560" height="250" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2.5" />
+<text x="816" y="140" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2b8a3e">TB-03: Các Trạm Kiểm Soát Server (Django)</text>
+<text x="818" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Gate 1: Escape HTML, bác bỏ trường authority tự khai</text>
+<text x="818" y="192" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Gate 2: Kiểm tra Full MFA Session &amp; security_epoch</text>
+<text x="818" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Gate 3: Khóa SecurityMutex(id=1) trong PostgreSQL</text>
+<text x="818" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Gate 4: Kiểm tra ActionChallenge (120s, 1 lần, đúng scope)</text>
+<text x="818" y="264" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">        + TOTP timestep mới (chống replay last_t)</text>
+<text x="818" y="288" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Gate 5: Kiểm tra 2 person_id độc lập &amp; SHA-256 Digest</text>
+<rect x="40" y="420" width="620" height="250" rx="10" fill="#fff9db" stroke="#e67700" stroke-width="2.5" />
+<text x="56" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#e67700">TB-04: Kênh Vận Hành Ngoại Tuyến Tin Cậy</text>
+<text x="58" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Bootstrap danh tính nhân viên (person_id đã xác minh)</text>
+<text x="58" y="502" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Xác minh độc lập danh mục BeneficiaryVersion (VERIFIED)</text>
+<text x="58" y="526" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Khôi phục tài khoản sau sự cố (tăng epoch + buộc duyệt lại)</text>
+<rect x="700" y="420" width="660" height="250" rx="10" fill="#f1f3f5" stroke="#212529" stroke-width="2.5" />
+<text x="716" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#212529">Kho Dữ Liệu PostgreSQL 17 (Trusted Storage)</text>
+<text x="718" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Bản chụp bất biến PaymentRevision + content_digest</text>
+<text x="718" y="502" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Phiếu duyệt Approval (lưu epoch lúc ký)</text>
+<text x="718" y="526" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Biên nhận mô phỏng PaymentExecution (duy nhất / request)</text>
+<text x="718" y="550" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Nhật ký AuditEvent (đã lọc secret, kèm reason_code)</text>
+<line x1="360" y1="220" x2="400" y2="220" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="380" y="214" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Text chưa xác minh</text>
+<line x1="760" y1="220" x2="800" y2="220" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="780" y="214" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">HTTP POST + OTP</text>
+<line x1="1080" y1="360" x2="1080" y2="420" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="1080" y="384" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Ghi nguyên tử dưới khóa</text>
+<line x1="660" y1="540" x2="700" y2="540" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="534" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Cập nhật có kiểm toán</text>
+</svg>

@@ -1,0 +1,21 @@
+{
+  "test_id": "T-35",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:32.287504+00:00",
+  "actual": "Subcase 1 (revoke commit truoc execute): R1 chuyen HOLD, execute bi chan (PRINCIPAL_REVOKED), Execution=0; Subcase 2 (execute commit truoc revoke): R2 ghi nhan 1 bien nhan SIM-RCPT-20261024131602-D930F3F5, revoke sau do tang epoch nhung khong xoa lich su/bien nhan da commit.",
+  "details": {
+    "subcase1_revoke_first": {
+      "revoke_new_epoch": 2,
+      "affected_requests": [
+        "REQ-20261024-0001-F318"
+      ],
+      "execute": "PRINCIPAL_REVOKED"
+    },
+    "subcase2_execute_first": {
+      "execute_receipt": "SIM-RCPT-20261024131602-D930F3F5",
+      "revoke_new_epoch": 2,
+      "affected_requests": []
+    }
+  }
+}

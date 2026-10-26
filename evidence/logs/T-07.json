@@ -1,0 +1,14 @@
+{
+  "test_id": "T-07",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:24.680274+00:00",
+  "actual": "Lan thu tu duyet (ke ca khi fixture gan role DIRECTOR) bi HTTP 403 (SELF_APPROVAL); Nam thu duyet lan 2 chiem 2 slot bi HTTP 409 (DUPLICATE_APPROVER); Approval count=1.",
+  "details": {
+    "self_approval_http": 403,
+    "self_approval_reason": "SELF_APPROVAL",
+    "duplicate_slot_http": 409,
+    "duplicate_slot_reason": "DUPLICATE_APPROVER",
+    "approval_count": 1
+  }
+}

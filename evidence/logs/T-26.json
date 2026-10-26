@@ -1,0 +1,13 @@
+{
+  "test_id": "T-26",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:08.848219+00:00",
+  "actual": "Khi role cua Nam bi doi tu DIRECTOR sang REQUESTER truoc khi execute, Final Gate phat hien role hien tai khong khop, chuyen R1 sang HOLD va tra HTTP 409 (PRINCIPAL_REVOKED); PaymentExecution count=0.",
+  "details": {
+    "http_status": 409,
+    "reason_code": "PRINCIPAL_REVOKED",
+    "request_status": "HOLD",
+    "execution_count": 0
+  }
+}

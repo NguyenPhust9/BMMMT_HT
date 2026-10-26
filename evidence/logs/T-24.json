@@ -1,0 +1,12 @@
+{
+  "test_id": "T-24",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:02.668581+00:00",
+  "actual": "Goi thang execute-simulated kem approval_ids/status tu khai bi HTTP 400 (FORBIDDEN); nguoi duyet Nam goi xin challenge EXECUTE bi HTTP 403 (FORBIDDEN); PaymentExecution count=0.",
+  "details": {
+    "injected_execute_http": 400,
+    "nam_execute_challenge_http": 403,
+    "execution_count": 0
+  }
+}

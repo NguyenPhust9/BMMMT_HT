@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 07: XỬ LÝ TÀI KHOẢN BỊ CHIẾM QUYỀN HOÀN TOÀN &amp; THU HỒI KHẨN CẤP (D-02, D-04, T-12, T-25)</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Chịu lỗi khi 1 người duyệt bị chiếm hoàn toàn và chặn thực thi tức thì tại Final Gate</text>
+<rect x="50" y="100" width="1260" height="170" rx="10" fill="#fff0f6" stroke="#c2255c" stroke-width="2.5" />
+<text x="66" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c2255c">Kịch bản 1: Tài khoản Giám đốc Nam (DIRECTOR) bị chiếm hoàn toàn cả Mật khẩu + Thiết bị TOTP (T-12, D-02)</text>
+<text x="68" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1. Kẻ gian đăng nhập hợp lệ qua cả 2 bước (Password + TOTP của Nam) và ký duyệt thành công slot DIRECTOR cho yêu cầu R1.</text>
+<text x="68" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">2. Kẻ gian thử ký tiếp slot CONTROLLER -&gt; Bị chặn vì role là DIRECTOR và trùng person_id (UniqueConstraint &amp; Service check).</text>
+<text x="68" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">3. Kẻ gian thử gọi thẳng API execute-simulated -&gt; Bị chặn vì DIRECTOR không có quyền thực thi và R1 mới chỉ có 1/2 phiếu.</text>
+<text x="68" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4. Kiểm soát viên Hương (độc lập) phát hiện bất thường và Reject R1 -&gt; R1 chuyển sang REJECTED vĩnh viễn, không có tiền giả lập nào được thực thi.</text>
+<rect x="50" y="300" width="1260" height="180" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="66" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">Kịch bản 2: Đình chỉ / Thu hồi tài khoản ngay trước bước Thực thi (T-25, D-04)</text>
+<text x="68" y="358" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1. Giả sử yêu cầu R2 đã có đủ 2 phiếu (APPROVED), nhưng trước khi Lan kịp thực thi thì phát hiện tài khoản của Nam có dấu hiệu lộ lọt.</text>
+<text x="68" y="382" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">2. Quản trị viên An (SECURITY_ADMIN) xin Challenge SUSPEND + nhập mã TOTP mới + lý do để đình chỉ tài khoản Nam.</text>
+<text x="68" y="406" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">3. Dưới khóa Mutex(1): Nam bị đặt is_suspended=True, security_epoch tăng từ 1 lên 2; phiếu duyệt của Nam trên R2 chuyển sang INVALIDATED_BY_INCIDENT; R2 chuyển sang HOLD.</text>
+<text x="68" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4. Khi Lan gọi execute-simulated cho R2: Final Gate kiểm tra thấy R2 đang HOLD và security_epoch của Nam không còn khớp -&gt; Từ chối 409 PRINCIPAL_REVOKED.</text>
+<rect x="50" y="510" width="1260" height="160" rx="10" fill="#ebfbee" stroke="#2f9e44" stroke-width="2.5" />
+<text x="66" y="540" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2f9e44">Kịch bản 3: Khôi phục ngoại tuyến tin cậy và Tranh chấp đồng thời Execute vs Revoke (T-15, T-35)</text>
+<text x="68" y="568" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- SECURITY_ADMIN không thể tự mở khóa hay reset MFA qua Web UI. Việc khôi phục chỉ chạy qua CLI ngoại tuyến (recover_principal), tăng tiếp security_epoch và buộc R2 phải tạo Revision mới để duyệt lại từ đầu.</text>
+<text x="68" y="592" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Khi Execute và Revoke chạy đồng thời trên PostgreSQL (T-35): Nhờ khóa SecurityMutex(id=1), nếu Revoke giữ khóa trước thì Execute thất bại; nếu Execute hợp lệ commit trước thì biên nhận lịch sử được bảo toàn.</text>
+<line x1="680" y1="270" x2="680" y2="300" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Phát hiện sự cố</text>
+<line x1="680" y1="480" x2="680" y2="510" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="489" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Khôi phục có kiểm soát</text>
+</svg>

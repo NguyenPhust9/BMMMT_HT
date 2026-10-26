@@ -1,0 +1,18 @@
+{
+  "test_id": "T-13",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:38.965023+00:00",
+  "actual": "5 lan nhap OTP sai tren session 1 tang failed_otp_attempts=5 va dat otp_throttled_until; doi sang session 2 va challenge moi van bi chan HTTP 429 (RATE_LIMITED); sau khi het thoi gian cho, Nam xac thuc lai thanh cong (HTTP 200).",
+  "details": {
+    "failed_attempt_statuses": [
+      400,
+      400,
+      400,
+      400,
+      429
+    ],
+    "second_session_http_while_locked": 429,
+    "post_cooldown_http": 200
+  }
+}

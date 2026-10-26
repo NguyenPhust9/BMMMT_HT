@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% load humanize %}
+{% block title %}Yêu cầu thanh toán — SecurePay{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">TRUNG TÂM PHÊ DUYỆT</p><h1>Yêu cầu thanh toán</h1><p class="page-subtitle">Theo dõi tiến độ, người đã duyệt và việc cần xử lý.</p></div>{% if current_role == "REQUESTER" %}<a href="/requests/new" class="btn btn-primary create-btn" id="btn-new-request"><i class="fa-solid fa-plus"></i> Tạo yêu cầu</a>{% endif %}</section>
+
+<form class="filter-bar" method="get">
+  <label class="filter-search"><i class="fa-solid fa-magnifying-glass"></i><input name="q" value="{{ q }}" placeholder="Tìm kiếm theo mã yêu cầu, người nhận..."></label>
+  <label><span>Trạng thái</span><select name="status"><option value="">Tất cả</option><option value="PENDING_APPROVAL" {% if status_filter == 'PENDING_APPROVAL' %}selected{% endif %}>Chờ duyệt</option><option value="APPROVED" {% if status_filter == 'APPROVED' %}selected{% endif %}>Đã phê duyệt</option><option value="EXECUTED_SIMULATED" {% if status_filter == 'EXECUTED_SIMULATED' %}selected{% endif %}>Đã thực hiện</option><option value="REJECTED" {% if status_filter == 'REJECTED' %}selected{% endif %}>Đã từ chối</option></select></label>
+  <label><span>Vai trò</span><select disabled><option>{{ request.user.get_role_display }}</option></select></label>
+  <label><span>Sắp xếp</span><select name="sort" onchange="this.form.submit()"><option value="newest" {% if sort == 'newest' %}selected{% endif %}>Cập nhật mới nhất</option><option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Cũ nhất</option></select></label>
+  <button class="filter-submit">Lọc</button>
+</form>
+
+<section class="stats-grid dashboard-stats">
+  <div class="stat-card"><span class="stat-icon blue"><i class="fa-regular fa-file-lines"></i></span><div><span>Tổng yêu cầu</span><strong>{{ summary.total }}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon amber"><i class="fa-regular fa-clock"></i></span><div><span>Đang chờ duyệt</span><strong>{{ summary.pending }}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon green"><i class="fa-regular fa-circle-check"></i></span><div><span>Đã đủ phê duyệt</span><strong>{{ summary.approved }}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon violet"><i class="fa-regular fa-user"></i></span><div><span>{% if current_role == 'DIRECTOR' or current_role == 'CONTROLLER' %}Cần bạn xử lý{% else %}Vai trò hiện tại{% endif %}</span><strong class="role-value">{% if current_role == 'DIRECTOR' or current_role == 'CONTROLLER' %}{{ summary.needs_action }}{% else %}{{ request.user.get_role_display }}{% endif %}</strong></div></div>
+</section>
+
+<section class="data-card">
+  <div class="table-scroll"><table class="requests-table"><colgroup><col class="col-code"><col class="col-amount"><col class="col-recipient"><col class="col-requester"><col class="col-updated"><col class="col-approval"><col class="col-status"><col class="col-actions"></colgroup><thead><tr><th>Mã yêu cầu</th><th>Số tiền</th><th>Người nhận</th><th>Người lập</th><th>Cập nhật</th><th>Tiến độ phê duyệt</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+  {% for item in request_items %}{% with req=item.request %}<tr class="{% if item.needs_my_approval %}priority-row{% endif %}">
+    <td><a class="table-code" href="/requests/{{ req.id }}">{{ req.request_code }}</a><span class="table-revision">Phiên bản {{ req.current_revision.revision_number }}</span>{% if item.needs_my_approval %}<span class="needs-action">Cần xử lý</span>{% endif %}</td>
+    <td><strong class="table-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ req.current_revision.amount_vnd|intcomma }} VND{% endif %}</strong></td>
+    <td class="recipient-cell">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ req.current_revision.beneficiary_name_snapshot }}{% endif %}</td>
+    <td>{{ req.requester.display_name }}</td><td>{{ req.updated_at|date:"d/m/Y" }}<br><span class="muted-text">{{ req.updated_at|date:"H:i" }}</span></td>
+    <td class="approval-cell"><div class="approval-count">{{ item.active_count }}/2</div><div class="progress-track"><span style="width:{% if item.active_count == 2 %}100{% elif item.active_count == 1 %}50{% else %}0{% endif %}%"></span></div><div class="mini-approval {% if item.director_approval %}done{% endif %}"><i class="{% if item.director_approval %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i><span><b>Giám đốc</b><small>{% if item.director_approval %}{{ item.director_approval.approver.display_name }}<br>{{ item.director_approval.created_at|date:"d/m/Y H:i" }}{% else %}Chưa duyệt{% endif %}</small></span></div><div class="mini-approval {% if item.controller_approval %}done{% endif %}"><i class="{% if item.controller_approval %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i><span><b>Kiểm soát viên</b><small>{% if item.controller_approval %}{{ item.controller_approval.approver.display_name }}<br>{{ item.controller_approval.created_at|date:"d/m/Y H:i" }}{% else %}Chưa duyệt{% endif %}</small></span></div></td>
+    <td>{% if req.status == "DRAFT" %}<span class="status status-draft">Bản nháp</span>{% elif req.status == "PENDING_APPROVAL" %}<span class="status status-pending">Chờ duyệt</span>{% elif req.status == "APPROVED" %}<span class="status status-approved">Đã duyệt</span>{% elif req.status == "EXECUTED_SIMULATED" %}<span class="status status-completed">Đã thực hiện</span>{% elif req.status == "HOLD" %}<span class="status status-hold">Tạm giữ</span>{% elif req.status == "REJECTED" %}<span class="status status-rejected">Đã từ chối</span>{% else %}<span class="status status-rejected">{{ req.get_status_display }}</span>{% endif %}</td>
+    <td><div class="row-actions"><a href="/requests/{{ req.id }}" class="btn btn-ghost">Xem chi tiết</a></div></td>
+  </tr>{% endwith %}{% empty %}<tr><td colspan="8"><div class="empty-state"><h3>Chưa có yêu cầu nào</h3><p>Thay đổi bộ lọc hoặc tạo yêu cầu mới.</p></div></td></tr>{% endfor %}
+  </tbody></table></div><div class="table-footer"><span>Hiển thị {{ request_items|length }} yêu cầu</span><div><button disabled>‹</button><b>1</b><button disabled>›</button><span>10 / trang⌄</span></div></div>
+</section>
+{% endblock %}

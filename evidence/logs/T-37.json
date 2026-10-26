@@ -1,0 +1,17 @@
+{
+  "test_id": "T-37",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:34.803231+00:00",
+  "actual": "Cac gia tri VND sai (0, am, so thap phan, vuot 1e12) deu bi chan HTTP 400 ([400, 400, 400, 400, 400]); noi dung <script> va <img onerror> trong purpose/source_excerpt duoc escape an toan (&lt;script&gt;...) va gan nhan 'Nguon ngoai — chua xac minh'.",
+  "details": {
+    "invalid_amount_statuses": [
+      400,
+      400,
+      400,
+      400,
+      400
+    ],
+    "escaped_script_present": true
+  }
+}

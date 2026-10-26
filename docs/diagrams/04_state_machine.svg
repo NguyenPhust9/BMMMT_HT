@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 04: MÁY TRẠNG THÁI YÊU CẦU THANH TOÁN (PAYMENT REQUEST STATE MACHINE)</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Kiểm soát chặt điều kiện chuyển trạng thái và các trạng thái kết thúc bất biến</text>
+<rect x="50" y="120" width="350" height="130" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" />
+<text x="66" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1971c2">1. DRAFT (Bản Nháp)</text>
+<text x="68" y="178" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- REQUESTER tạo mới hoặc tạo Revision N+1</text>
+<text x="68" y="202" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Chưa có hiệu lực duyệt</text>
+<text x="68" y="226" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Gửi duyệt (Submit) -&gt; Đóng băng Snapshot</text>
+<rect x="460" y="120" width="440" height="130" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="476" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">2. PENDING_APPROVAL (Chờ Duyệt)</text>
+<text x="478" y="178" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- 0/2 hoặc 1/2 phiếu duyệt hợp lệ</text>
+<text x="478" y="202" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Hạn 24h tính từ submitted_at (Server UTC)</text>
+<text x="478" y="226" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Cần đủ DIRECTOR + CONTROLLER độc lập</text>
+<rect x="960" y="120" width="390" height="130" rx="10" fill="#ebfbee" stroke="#2f9e44" stroke-width="2.5" />
+<text x="976" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2f9e44">3. APPROVED (Đủ 2 Phiếu Hợp Lệ)</text>
+<text x="978" y="178" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Đủ 2 phiếu ACTIVE cùng Revision &amp; Digest</text>
+<text x="978" y="202" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Chỉ là nhãn hiển thị; trước khi thực thi</text>
+<text x="978" y="226" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  vẫn phải kiểm tra lại toàn bộ ở Final Gate</text>
+<rect x="50" y="320" width="420" height="150" rx="10" fill="#fff0f6" stroke="#c2255c" stroke-width="2.5" />
+<text x="66" y="350" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c2255c">4. HOLD (Tạm Giữ Do Sự Cố An Ninh)</text>
+<text x="68" y="378" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Kích hoạt khi Requester/Approver bị Suspend,</text>
+<text x="68" y="402" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  Revoke_all, đổi Role/MFA, hoặc Beneficiary bị thu hồi</text>
+<text x="68" y="426" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Chặn thực thi; muốn tiếp tục phải khắc phục</text>
+<text x="68" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  nguyên nhân và tạo Revision mới để duyệt lại</text>
+<rect x="520" y="320" width="830" height="150" rx="10" fill="#d3f9d8" stroke="#2b8a3e" stroke-width="2.5" />
+<text x="536" y="350" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2b8a3e">5. EXECUTED_SIMULATED (Trạng Thái Cuối - Thành Công Mô Phỏng)</text>
+<text x="538" y="378" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Chỉ chính REQUESTER thực thi với Challenge EXECUTE + mã TOTP mới + Idempotency-Key</text>
+<text x="538" y="402" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Tạo đúng 1 bản ghi PaymentExecution (SIMULATED) dưới khóa SecurityMutex(id=1)</text>
+<text x="538" y="426" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Không thể sửa, hủy, từ chối hay thực thi tạo giao dịch lần hai</text>
+<rect x="50" y="520" width="1300" height="150" rx="10" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2.5" />
+<text x="66" y="550" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c92a2a">Các Trạng Thái Kết Thúc Khác (Terminal States: REJECTED / CANCELLED / EXPIRED)</text>
+<text x="68" y="578" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- REJECTED: Một người duyệt (DIRECTOR hoặc CONTROLLER) từ chối với Challenge REJECT + OTP mới + Lý do</text>
+<text x="68" y="602" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- CANCELLED: Chủ yêu cầu (REQUESTER) hủy trước khi thực thi</text>
+<text x="68" y="626" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- EXPIRED: Quá thời hạn 24h theo đồng hồ UTC của máy chủ -&gt; Mọi thao tác duyệt/thực thi tiếp theo đều bị từ chối</text>
+<line x1="350" y1="185" x2="460" y2="185" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="405" y="179" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Submit (Freeze)</text>
+<line x1="900" y1="185" x2="960" y2="185" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="930" y="179" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Đủ 2/2 phiếu</text>
+<line x1="680" y1="250" x2="260" y2="320" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="470" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Sự cố / Revoke</text>
+<line x1="1150" y1="250" x2="1050" y2="320" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="1100" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Final Gate + OTP</text>
+<line x1="260" y1="320" x2="200" y2="250" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="230" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Revise (N+1)</text>
+</svg>

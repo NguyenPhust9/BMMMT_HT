@@ -1,0 +1,132 @@
+{
+  "demo_id": "D-03",
+  "request_code": "REQ-20261024-0001-1025",
+  "illegal_direct_edit_http": 409,
+  "rev2_status_after_create": "DRAFT",
+  "old_challenge_reuse_http": 409,
+  "old_challenge_reuse_error": "WRONG_SCOPE",
+  "final_status": "EXECUTED_SIMULATED",
+  "final_receipt": "SIM-RCPT-20261024131253-56B9B208",
+  "audit_timeline": [
+    {
+      "action": "CREATE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "NONE",
+      "after_state": "DRAFT"
+    },
+    {
+      "action": "SUBMIT_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "DRAFT",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "huong",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "EDIT_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "DENIED",
+      "reason_code": "IMMUTABLE_REVISION",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "REVISE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL:Rev#1",
+      "after_state": "DRAFT:Rev#2"
+    },
+    {
+      "action": "SUBMIT_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "DRAFT",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "huong",
+      "result": "DENIED",
+      "reason_code": "WRONG_SCOPE",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "huong",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "huong",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "APPROVED"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "EXECUTE_PAYMENT_SIMULATED",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "APPROVED",
+      "after_state": "EXECUTED_SIMULATED"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "run": 1,
+    "principals": 3,
+    "mfa_challenges_consumed": 6,
+    "http_roundtrips": 14,
+    "login_3_users_ms": 1956.8,
+    "workflow_approve_execute_ms": 169.9,
+    "total_system_ms": 2126.8
+  },
+  {
+    "run": 2,
+    "principals": 3,
+    "mfa_challenges_consumed": 6,
+    "http_roundtrips": 14,
+    "login_3_users_ms": 2155.6,
+    "workflow_approve_execute_ms": 189.3,
+    "total_system_ms": 2345.0
+  },
+  {
+    "run": 3,
+    "principals": 3,
+    "mfa_challenges_consumed": 6,
+    "http_roundtrips": 14,
+    "login_3_users_ms": 2103.9,
+    "workflow_approve_execute_ms": 171.0,
+    "total_system_ms": 2274.9
+  },
+  {
+    "run": 4,
+    "principals": 3,
+    "mfa_challenges_consumed": 6,
+    "http_roundtrips": 14,
+    "login_3_users_ms": 1927.8,
+    "workflow_approve_execute_ms": 166.8,
+    "total_system_ms": 2094.5
+  },
+  {
+    "run": 5,
+    "principals": 3,
+    "mfa_challenges_consumed": 6,
+    "http_roundtrips": 14,
+    "login_3_users_ms": 1925.9,
+    "workflow_approve_execute_ms": 166.8,
+    "total_system_ms": 2092.7
+  }
+]

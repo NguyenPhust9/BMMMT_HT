@@ -1,0 +1,20 @@
+{
+  "test_id": "T-34",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:27.172120+00:00",
+  "actual": "Hai ket noi PostgreSQL cung gui 1 ma TOTP cua Nam cho 2 challenge (R1 va R2) qua Barrier(2): ket qua ['APPROVED', 'OTP_REPLAY']; tong Approval cua Nam tang dung 1.",
+  "details": {
+    "outcomes": [
+      {
+        "request_id": "1de14e64-6e11-41bd-bd65-252d06b74904",
+        "result": "APPROVED"
+      },
+      {
+        "request_id": "35c272f6-b534-436b-bf4a-bf9d70eb99e4",
+        "result": "OTP_REPLAY"
+      }
+    ],
+    "total_nam_approvals": 1
+  }
+}

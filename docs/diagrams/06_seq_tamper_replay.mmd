@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    actor Lan as Lan (REQUESTER)
+    actor Nam as Nam (DIRECTOR)
+    participant Web as Django Server (Services)
+    participant DB as PostgreSQL + SecurityMutex(1)
+
+    Note over Lan,DB: Yêu cầu R1 (Revision 1: 20.000.000 VND) đã nộp và có phiếu duyệt của Nam + Challenge C1 cũ
+    Lan->>Web: POST /requests/{id}/edit (Thử sửa trực tiếp amount_vnd=50.000.000 trên Revision 1 đã đóng băng)
+    Web->>DB: Lock Mutex(1) -> Phát hiện Revision 1 is_frozen=True -> Ghi Audit DENIED
+    Web-->>Lan: 409 SNAPSHOT_MISMATCH / IMMUTABLE_REVISION (Chặn sửa âm thầm - T-19)
+
+    Lan->>Web: POST /requests/{id}/revise (Tạo Revision 2 hợp lệ: đổi số tiền thành 25.000.000 VND)
+    Web->>DB: Lock Mutex(1) -> Tạo Revision 2 (DRAFT), chuyển Approval(Rev1) sang SUPERSEDED_BY_REVISION, hủy Challenge cũ
+    Web-->>Lan: 200 OK (Trạng thái quay về DRAFT - Revision 2 - T-20)
+
+    Lan->>Web: POST /requests/{id}/submit (Đóng băng Revision 2 với Digest mới D2)
+    Web->>DB: Lock Mutex(1) -> PENDING_APPROVAL (Revision 2, 0/2 phiếu)
+
+    Nam->>Web: POST /requests/{id}/approve (Thử phát lại Challenge cũ của Revision 1 hoặc mã TOTP cũ cùng timestep)
+    Web->>DB: Lock Mutex(1) -> Kiểm tra thấy sai Revision/Digest hoặc Challenge đã dùng / TOTP Replay
+    Web-->>Nam: 409 WRONG_SCOPE / CHALLENGE_USED / OTP_REPLAY (Chặn phát lại - T-17, T-22, T-23)
+

@@ -1,0 +1,59 @@
+flowchart TB
+    subgraph EXT["Kênh Bên Ngoài (Không Tin Cậy - TB-01)"]
+        MSG["Tin nhắn Zalo / Email / Cuộc gọi<br/>(Có thể bị giả mạo / Deepfake)"]
+    end
+
+    subgraph CLIENTS["Trình Duyệt Người Dùng (Không Tin Cậy - TB-02)"]
+        REQ_UI["Trình duyệt REQUESTER<br/>(Kế toán Lan / Minh)"]
+        DIR_UI["Trình duyệt DIRECTOR<br/>(Giám đốc Nam)"]
+        CTL_UI["Trình duyệt CONTROLLER<br/>(Kiểm soát viên Hương)"]
+        SEC_UI["Trình duyệt SECURITY_ADMIN<br/>(An ninh An)"]
+        TOTP_APP["Thiết bị TOTP độc lập<br/>(Tạo mã OTP 6 số theo timestep)"]
+    end
+
+    subgraph PROXY["Ranh Giới Mạng Cục Bộ / TLS (127.0.0.1)"]
+        CADDY["Reverse Proxy / HTTPS Profile<br/>(TLS + CA nội bộ Lab / Loopback)"]
+    end
+
+    subgraph APP["Máy Chủ Ứng Dụng Django 5.2 Monolith (Tin Cậy - TB-03)"]
+        MW["Middleware Bảo Mật<br/>(CSRF, Session Timeout, SecurityEpoch Check)"]
+        ACC["apps.accounts<br/>(Pre-Auth -> MFA, Role, Throttle, Suspend/Revoke)"]
+        BEN["apps.beneficiaries<br/>(Danh mục BeneficiaryVersion VERIFIED bất biến)"]
+        PAY["apps.payments<br/>(PaymentRevision Digest, ActionChallenge, Approval, Final Gate)"]
+        AUD["apps.audit<br/>(AuditEvent Sanitizer & Scoped Views)"]
+    end
+
+    subgraph DB["Cơ Sở Dữ Liệu Nội Bộ (PostgreSQL 16/17)"]
+        MUTEX[("SecurityMutex(id=1)<br/>SELECT ... FOR UPDATE")]
+        PG[("PostgreSQL Tables<br/>Users, TOTPDevice, Beneficiaries,<br/>Requests, Revisions, Challenges,<br/>Approvals, Executions, AuditEvents")]
+    end
+
+    subgraph OPS["Vận Hành Ngoại Tuyến Tin Cậy (TB-04)"]
+        CLI["Management Commands (CLI)<br/>bootstrap_lab / manage_beneficiary / recover_principal"]
+    end
+
+    MSG -. "Trích dẫn văn bản (Chưa xác minh)" .-> REQ_UI
+    TOTP_APP -. "Nhập mã OTP mới" .-> REQ_UI
+    TOTP_APP -. "Nhập mã OTP mới" .-> DIR_UI
+    TOTP_APP -. "Nhập mã OTP mới" .-> CTL_UI
+    TOTP_APP -. "Nhập mã OTP mới" .-> SEC_UI
+
+    REQ_UI == "HTTPS / HTTP Loopback + CSRF" ==> CADDY
+    DIR_UI == "HTTPS / HTTP Loopback + CSRF" ==> CADDY
+    CTL_UI == "HTTPS / HTTP Loopback + CSRF" ==> CADDY
+    SEC_UI == "HTTPS / HTTP Loopback + CSRF" ==> CADDY
+
+    CADDY ==> MW
+    MW --> ACC
+    MW --> BEN
+    MW --> PAY
+    MW --> AUD
+
+    ACC ==> MUTEX
+    PAY ==> MUTEX
+    BEN ==> MUTEX
+    CLI ==> MUTEX
+
+    MUTEX --> PG
+    AUD --> PG
+

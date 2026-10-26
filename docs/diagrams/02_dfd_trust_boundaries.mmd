@@ -1,0 +1,34 @@
+flowchart LR
+    subgraph TB1["TB-01: Nguồn Ngoài (Untrusted)"]
+        EXT_SRC["Tin nhắn / Cuộc gọi bên ngoài<br/>(Giả danh Giám đốc / Nhà cung cấp)"]
+    end
+
+    subgraph TB2["TB-02: Trình Duyệt / HTTP Client (Untrusted)"]
+        B_REQ["Phiên trình duyệt REQUESTER"]
+        B_APP["Phiên trình duyệt DIRECTOR / CONTROLLER"]
+        B_SEC["Phiên trình duyệt SECURITY_ADMIN"]
+    end
+
+    subgraph TB3["TB-03: Máy Chủ Django & PostgreSQL (Trusted Server Core)"]
+        V_VAL["1. Input Validation & HTML Escaping<br/>(Bỏ qua trường role/verified/state tự khai)"]
+        V_AUTH["2. Session & SecurityEpoch Gate<br/>(Kiểm tra Pre-Auth vs Full MFA)"]
+        V_CHAL["3. ActionChallenge & TOTP Verifier<br/>(120s TTL, One-Time, Anti-Replay last_t)"]
+        V_GATE["4. Final Gate dưới SecurityMutex(id=1)<br/>(Kiểm tra 2 person_id độc lập, digest, active version)"]
+        DB_STORE[("PostgreSQL 17<br/>Snapshot + Ledger Mô Phỏng + AuditEvent")]
+    end
+
+    subgraph TB4["TB-04: Vận Hành Ngoại Tuyến (Trusted Offline Ops)"]
+        OFF_CLI["CLI Ngoại Tuyến<br/>(Bootstrap / Xác minh Beneficiary / Khôi phục MFA)"]
+    end
+
+    EXT_SRC -- "source_excerpt (Text thô)" --> B_REQ
+    B_REQ -- "POST /requests, /submit, /execute-simulated" --> V_VAL
+    B_APP -- "POST /challenges, /approve, /reject" --> V_VAL
+    B_SEC -- "POST /security/users/{id}/suspend, /revoke-all" --> V_VAL
+
+    V_VAL --> V_AUTH
+    V_AUTH --> V_CHAL
+    V_CHAL --> V_GATE
+    V_GATE <--> DB_STORE
+    OFF_CLI -- "Cập nhật có khóa + Tăng Epoch + Ghi Audit" --> DB_STORE
+

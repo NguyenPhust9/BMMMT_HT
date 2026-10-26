@@ -1,0 +1,28 @@
+# Environment & Private Local Secrets (NEVER commit or package)
+.env
+.env.*
+!.env.example
+private/
+.venv/
+venv/
+node_modules/
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local PostgreSQL runtime / temp files
+pgdata/
+*.pid
+*.log
+!evidence/**/*.log
+!evidence/**/*.txt
+!evidence/**/*.json
+!evidence/**/*.csv
+!evidence/**/*.md
+!evidence/**/*.png
+

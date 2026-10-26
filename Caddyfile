@@ -1,0 +1,13 @@
+{
+    auto_https disable_redirects
+    local_certs
+}
+
+https://localhost:8443, https://127.0.0.1:8443 {
+    tls internal
+    reverse_proxy web:8000 {
+        header_up X-Forwarded-Proto https
+        header_up Host {host}
+    }
+}
+

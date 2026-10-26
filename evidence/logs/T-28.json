@@ -1,0 +1,15 @@
+{
+  "test_id": "T-28",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:14.092122+00:00",
+  "actual": "Khi BEN-001 duoc cap nhat sang version 2 truoc luc execute, Final Gate phat hien revision 1 gan voi version 1 da cu, tra HTTP 409 (PRINCIPAL_REVOKED) va khong tu dong chuyen sang tai khoan moi (PaymentExecution=0).",
+  "details": {
+    "approved_beneficiary_version": 1,
+    "active_beneficiary_version": 2,
+    "execute_http": 409,
+    "reason_code": "PRINCIPAL_REVOKED",
+    "request_status": "HOLD",
+    "execution_count": 0
+  }
+}

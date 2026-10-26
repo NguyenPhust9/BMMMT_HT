@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — SecurePay{% endblock %}{% block breadcrumb %}{{ title }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{{ eyebrow }}</p><h1>{{ title }}</h1><p class="page-subtitle">{{ description }}</p></div><button class="btn btn-primary" disabled><i class="fa-solid fa-plus"></i> Tạo mới</button></section>
+<section class="stats-grid dashboard-stats">{% for label,value in cards %}<div class="stat-card"><span class="stat-icon {% cycle 'blue' 'amber' 'green' 'violet' %}"><i class="fa-solid {{ icon }}"></i></span><div><span>{{ label }}</span><strong>{{ value|default:"—" }}</strong></div></div>{% endfor %}</section>
+<section class="data-card standard-data-card"><div class="module-toolbar"><label><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Tìm kiếm trong {{ title|lower }}..." disabled></label><button class="btn btn-ghost" disabled><i class="fa-solid fa-filter"></i> Bộ lọc</button></div><table><thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}</tr></thead><tbody><tr class="empty-row"><td colspan="{{ columns|length }}"><div class="module-empty"><i class="fa-solid {{ icon }}"></i><h3>Chưa có dữ liệu</h3><p>Phân hệ {{ title|lower }} đang được chuẩn bị.</p><span>Sắp có</span></div></td></tr></tbody></table></section>
+{% endblock %}

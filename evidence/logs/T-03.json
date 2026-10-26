@@ -1,0 +1,13 @@
+{
+  "test_id": "T-03",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:16.744984+00:00",
+  "actual": "Huong tu choi dua yeu cau ve REJECTED (HTTP 200); Nam thu xin challenge duyet bi HTTP 409 (TERMINAL_STATE), Lan thu execute bi HTTP 409 (TERMINAL_STATE); trang thai giu nguyen REJECTED, PaymentExecution=0.",
+  "details": {
+    "status_after_reject": "REJECTED",
+    "nam_challenge_http": 409,
+    "lan_execute_http": 409,
+    "execution_count": 0
+  }
+}

@@ -1,0 +1,2 @@
+"""SecurePay Lab configuration package."""
+

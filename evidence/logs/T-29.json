@@ -1,0 +1,15 @@
+{
+  "test_id": "T-29",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:17.011205+00:00",
+  "actual": "Sau khi R1 dat EXECUTED_SIMULATED (SIM-RCPT-20261024131216-BBA22C18), revise=409, cancel=409, reject_challenge=409, execute voi key moi=409; PaymentExecution count=1 khong doi.",
+  "details": {
+    "receipt_id": "SIM-RCPT-20261024131216-BBA22C18",
+    "revise_http": 409,
+    "cancel_http": 409,
+    "reject_http": 409,
+    "second_key_execute_http": 409,
+    "execution_count": 1
+  }
+}

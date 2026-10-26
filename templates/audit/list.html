@@ -1,0 +1,68 @@
+{% extends "base.html" %}{% load audit_ui %}
+{% block title %}Nhật ký hoạt động — SecurePay{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">THEO DÕI HỆ THỐNG</p><h1>Nhật ký hoạt động</h1><p class="page-subtitle">Lịch sử đăng nhập, phê duyệt và xử lý yêu cầu.</p></div></section>
+<div class="data-card standard-data-card">
+  <div class="alert alert-info">
+    Nhật ký chỉ lưu thông tin cần thiết để truy vết. Mật khẩu, mã OTP và dữ liệu phiên không được ghi lại.
+  </div>
+
+  <form method="get" action="/audit" class="standard-filter">
+    <input type="text" name="action" class="form-control" value="{{ action_filter }}" placeholder="Tìm theo thao tác...">
+    <select name="result" class="form-control">
+      <option value="">-- Tất cả kết quả --</option>
+      <option value="SUCCESS" {% if result_filter == "SUCCESS" %}selected{% endif %}>Thành công</option>
+      <option value="DENIED" {% if result_filter == "DENIED" %}selected{% endif %}>Bị từ chối</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Lọc nhật ký</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr class="empty-row">
+        <th>Thời gian (Server)</th>
+        <th>Người thực hiện</th>
+        <th>Hành động</th>
+        <th>Đối tượng</th>
+        <th>Kết quả</th>
+        <th>Thay đổi trạng thái</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ev in page_obj.object_list %}
+      <tr>
+        <td class="mono">{{ ev.created_at|date:"Y-m-d H:i:s" }}</td>
+        <td>
+          <code>{{ ev.actor_username_snapshot }}</code>
+          {% if ev.actor_person_id %}<br><small>{{ ev.actor_person_id }} · {{ ev.actor_role|role_label }}</small>{% endif %}
+        </td>
+        <td><strong>{{ ev.action|audit_action }}</strong></td>
+        <td class="mono">
+          {% if ev.payment_request %}
+            {{ ev.payment_request.request_code }} (Phiên bản {{ ev.revision_number|default:"1" }})
+          {% elif ev.target_user %}
+            {{ ev.target_user.display_name }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          {% if ev.result == "SUCCESS" %}
+            <span class="badge badge-approved">Thành công</span>
+          {% else %}
+            <span class="badge badge-danger">Bị từ chối</span>
+            {% if ev.reason_code %}<small>{{ ev.reason_code|reason_label }}</small>{% endif %}
+          {% endif %}
+        </td>
+        <td><small>{{ ev.before_state|state_label }} → {{ ev.after_state|state_label }}</small></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align:center;">Chưa có bản ghi nhật ký nào phù hợp.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

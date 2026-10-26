@@ -1,0 +1,13 @@
+{
+  "test_id": "T-25",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:06.150591+00:00",
+  "actual": "Sau khi SecurityAdmin dinh chi Nam, R1 chuyen sang trang thai HOLD; Lan thu execute bang challenge da cap truoc do bi chan HTTP 409 (PRINCIPAL_REVOKED); PaymentExecution count=0.",
+  "details": {
+    "request_status_after_suspend": "HOLD",
+    "lan_execute_http": 409,
+    "lan_execute_reason": "PRINCIPAL_REVOKED",
+    "execution_count": 0
+  }
+}

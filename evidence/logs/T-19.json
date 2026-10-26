@@ -1,0 +1,13 @@
+{
+  "test_id": "T-19",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:51.671173+00:00",
+  "actual": "Cap nhat truc tiep vao /requests/<id>/edit khi revision 1 da dong bang bi HTTP 409 (IMMUTABLE_REVISION); amount_vnd=20000000 va content_digest=adb29a326e057a8a... giu nguyen.",
+  "details": {
+    "direct_edit_http": 409,
+    "reason_code": "IMMUTABLE_REVISION",
+    "rev1_amount_vnd": 20000000,
+    "rev1_digest": "adb29a326e057a8a79bd248b42f394d1874ed231e4383afcf4097d68b5d9ec34"
+  }
+}

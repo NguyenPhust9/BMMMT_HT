@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 01: KIẾN TRÚC TỔNG THỂ HỆ THỐNG SECUREPAY LAB &amp; RANH GIỚI BẢO MẬT</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Monolith Django 5.2 + PostgreSQL 17 + SecurityMutex(id=1) + Step-Up MFA Challenge</text>
+<rect x="40" y="100" width="340" height="110" rx="10" fill="#fff4e6" stroke="#d9480f" stroke-width="2.5" />
+<text x="56" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#d9480f">TB-01: Kênh Bên Ngoài (Không Tin Cậy)</text>
+<text x="58" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Tin nhắn Zalo / Email / Cuộc gọi giả danh</text>
+<text x="58" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Chỉ lưu vào source_kind / source_excerpt</text>
+<text x="58" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Luôn escape HTML &amp; gắn nhãn 'Chưa xác minh'</text>
+<rect x="450" y="100" width="500" height="110" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" />
+<text x="466" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1971c2">TB-02: Trình Duyệt &amp; Thiết Bị TOTP</text>
+<text x="468" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- 4 vai trò: REQUESTER, DIRECTOR, CONTROLLER, SECURITY_ADMIN</text>
+<text x="468" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Thiết bị TOTP độc lập (6 số, 30s timestep)</text>
+<text x="468" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Không quyết định quyền hay trạng thái ở client</text>
+<rect x="980" y="100" width="380" height="110" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="2.5" />
+<text x="996" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#6741d9">Reverse Proxy / HTTPS Profile</text>
+<text x="998" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Loopback 127.0.0.1 / TLS CA nội bộ Lab</text>
+<text x="998" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Cookie HttpOnly, SameSite=Lax, Secure (HTTPS)</text>
+<text x="998" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Kiểm tra CSRF &amp; Trusted Origins</text>
+<rect x="40" y="250" width="910" height="210" rx="10" fill="#ebfbee" stroke="#2f9e44" stroke-width="2.5" />
+<text x="56" y="280" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2f9e44">TB-03: Máy Chủ Ứng Dụng Django 5.2 Monolith (Trusted Core)</text>
+<text x="58" y="308" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1. Middleware: CSRF + Session Idle/Max Timeout + SecurityEpoch Verification</text>
+<text x="58" y="332" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">2. apps.accounts: Pre-Auth (5m) -&gt; Full MFA Session, Throttle, Suspend / Revoke_all</text>
+<text x="58" y="356" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">3. apps.beneficiaries: Danh mục BeneficiaryVersion (VERIFIED) bất biến, không sửa tại chỗ</text>
+<text x="58" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4. apps.payments: Đóng băng PaymentRevision (SHA-256 Digest), ActionChallenge (120s),</text>
+<text x="58" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">   2 Approval độc lập (DIRECTOR + CONTROLLER != REQUESTER), Final Gate &amp; PaymentExecution</text>
+<text x="58" y="428" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">5. apps.audit: Ghi AuditEvent cùng transaction, lọc sạch secret/OTP/cookie, phân quyền đọc</text>
+<rect x="980" y="250" width="380" height="210" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="996" y="280" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">TB-04: Vận Hành Ngoại Tuyến (CLI)</text>
+<text x="998" y="308" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- manage.py bootstrap_lab (Seed cố định)</text>
+<text x="998" y="332" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- manage.py manage_beneficiary (Đối chiếu 2 người)</text>
+<text x="998" y="356" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- manage.py recover_principal (Khôi phục MFA,</text>
+<text x="998" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  tăng security_epoch, chuyển request sang HOLD)</text>
+<text x="998" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Không mở /admin/ hay API reset MFA công khai</text>
+<rect x="40" y="500" width="1320" height="180" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="2.5" />
+<text x="56" y="530" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#343a40">Cơ Sở Dữ Liệu Quan Hệ PostgreSQL 17 (Mạng Nội Bộ)</text>
+<text x="58" y="558" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- SecurityMutex(id=1): SELECT ... FOR UPDATE tuần tự hóa mọi mutation nhạy cảm</text>
+<text x="58" y="582" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Ràng buộc DB: amount_vnd &gt; 0, Unique(revision, slot), Unique(revision, approver_person_id), OneToOne(PaymentExecution.payment_request)</text>
+<text x="58" y="606" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Lưu trữ: EmployeeIdentity, TOTPDevice, Beneficiary/Version, PaymentRequest/Revision, ActionChallenge, Approval, PaymentExecution, AuditEvent</text>
+<line x1="380" y1="155" x2="450" y2="155" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="415" y="149" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Trích dẫn thô</text>
+<line x1="950" y1="155" x2="980" y2="155" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="965" y="149" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">HTTPS / HTTP</text>
+<line x1="1170" y1="210" x2="600" y2="250" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="885" y="224" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Forward tới Django</text>
+<line x1="495" y1="460" x2="495" y2="500" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="495" y="474" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Transaction + Lock Mutex(1)</text>
+<line x1="1170" y1="460" x2="1170" y2="500" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="1170" y="474" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">CLI Lock Mutex(1) + Audit</text>
+</svg>

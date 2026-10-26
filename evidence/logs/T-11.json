@@ -1,0 +1,14 @@
+{
+  "test_id": "T-11",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:33.129239+00:00",
+  "actual": "Phien bi danh cap gui mfa_verified=true nhung thieu OTP bi HTTP 400; sau logout, challenge co invalidated_at != None, security_epoch giu nguyen (1), goi lai bang phien cu bi HTTP 401.",
+  "details": {
+    "no_otp_http": 400,
+    "challenge_invalidated": true,
+    "epoch_before": 1,
+    "epoch_after": 1,
+    "after_logout_http": 401
+  }
+}

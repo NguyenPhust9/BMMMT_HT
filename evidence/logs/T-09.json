@@ -1,0 +1,13 @@
+{
+  "test_id": "T-09",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:28.719980+00:00",
+  "actual": "SecurityAdmin An bi tu choi moi thao tac tai chinh: create=403, challenge_approve=403, execute=403; duong dan /admin/ bi chan HTTP 403 (PROHIBITED_ROUTE_ATTEMPT).",
+  "details": {
+    "create_http": 403,
+    "challenge_http": 403,
+    "execute_http": 403,
+    "django_admin_http": 403
+  }
+}

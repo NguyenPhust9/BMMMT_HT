@@ -1,0 +1,13 @@
+{
+  "test_id": "T-04",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:19.448254+00:00",
+  "actual": "Minh thu huy R1 cua Lan bi HTTP 403 (FORBIDDEN); Lan huy thanh cong HTTP 200 -> CANCELLED; Nam thu duyet tiep bi HTTP 409.",
+  "details": {
+    "minh_cancel_http": 403,
+    "lan_cancel_http": 200,
+    "post_cancel_approve_http": 409,
+    "final_status": "CANCELLED"
+  }
+}

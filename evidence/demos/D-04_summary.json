@@ -1,0 +1,19 @@
+{
+  "demo_id": "D-04",
+  "part1_hold_status": "HOLD",
+  "part1_execute_after_suspend_http": 409,
+  "part1_execute_error": "PRINCIPAL_REVOKED",
+  "part2_concurrent_workers": [
+    {
+      "worker": 2,
+      "receipt": "SIM-RCPT-20261024131504-BE4B5929",
+      "is_replay": false
+    },
+    {
+      "worker": 1,
+      "receipt": "SIM-RCPT-20261024131504-BE4B5929",
+      "is_replay": true
+    }
+  ],
+  "part2_execution_count": 1
+}

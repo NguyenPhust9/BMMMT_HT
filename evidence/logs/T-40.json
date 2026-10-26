@@ -1,0 +1,13 @@
+{
+  "test_id": "T-40",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:42.208111+00:00",
+  "actual": "Khi chen loi RuntimeError giua transaction execute_payment_request_simulated, PostgreSQL rollback toan bo: PaymentExecution=0, status giu nguyen APPROVED, challenge chua consumed, AuditEvent SUCCESS=0; sau khi bo loi va thu lai, giao dich thanh cong voi 1 bien nhan SIM-RCPT-20261024131452-760F644B.",
+  "details": {
+    "count_after_fault": 0,
+    "status_after_fault": "APPROVED",
+    "count_after_retry": 1,
+    "receipt_id": "SIM-RCPT-20261024131452-760F644B"
+  }
+}

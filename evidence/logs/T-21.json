@@ -1,0 +1,13 @@
+{
+  "test_id": "T-21",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:55.554614+00:00",
+  "actual": "Tai now = expires_at - 1s (2026-10-24T13:15:29.470568+00:00), C1 duoc chap nhan; tai now == expires_at (2026-10-24T13:15:30.470568+00:00) va now = expires_at + 5s (2026-10-24T13:15:35.470568+00:00), C2 bi tu choi voi CHALLENGE_EXPIRED; Approval count cho R2 = 0.",
+  "details": {
+    "c1_expires_at": "2026-10-24T13:15:30.470568+00:00",
+    "c1_before_boundary_approved": true,
+    "c2_exact_boundary_reason": "CHALLENGE_EXPIRED",
+    "c2_after_boundary_reason": "CHALLENGE_EXPIRED"
+  }
+}

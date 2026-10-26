@@ -1,0 +1,13 @@
+{
+  "test_id": "T-22",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:58.461315+00:00",
+  "actual": "Phat lai challenge da tieu thu bi HTTP 409, consumed_at giu nguyen; retry idempotent cung key IDEMP-T22-KEY tra cung bien nhan SIM-RCPT-20261024131158-20F26668 voi PaymentExecution count=1.",
+  "details": {
+    "replay_approve_http": 409,
+    "receipt_id": "SIM-RCPT-20261024131158-20F26668",
+    "idempotent_replay_flag": true,
+    "execution_count": 1
+  }
+}

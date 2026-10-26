@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Xác thực tài khoản — SecurePay{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px;margin:30px auto;">
+  <h2>Xác thực đa yếu tố (Bước 2 / 2: Mã TOTP)</h2>
+  <div class="alert alert-warning">
+    Nhập mã TOTP 6 chữ số từ thiết bị xác thực đã đăng ký.
+    <strong>Lưu ý chống phát lại (Anti-Replay):</strong> Mỗi khung thời gian 30 giây (timestep) chỉ được chấp nhận một lần trên cùng thiết bị. Sau khi đăng nhập xong, nếu thực hiện phê duyệt hoặc thực thi ngay thì cần chờ mã OTP chuyển sang chu kỳ mới.
+  </div>
+  <form method="post" action="/auth/mfa" id="mfa-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_otp_token">Mã TOTP 6 chữ số mới</label>
+      <input type="text" name="otp_token" id="id_otp_token" class="form-control mono" maxlength="6" pattern="[0-9]{6}" required autocomplete="one-time-code">
+    </div>
+    <button type="submit" class="btn btn-success" id="btn-mfa-submit">Hoàn tất xác thực đăng nhập</button>
+  </form>
+</div>
+{% endblock %}
+

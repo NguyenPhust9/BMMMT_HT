@@ -1,0 +1,17 @@
+{
+  "test_id": "T-32",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:24.091547+00:00",
+  "actual": "Ca 2 thu tu khoa tren PostgreSQL deu an toan: Order A (revise truoc -> approve cu bi tu choi WRONG_SCOPE); Order B (approve truoc -> revise sau vo hieu phieu cu va dua ve DRAFT); khong co phieu cu nao con ACTIVE cho revision 2.",
+  "details": {
+    "order_a": {
+      "revise": 2,
+      "approve": "WRONG_SCOPE"
+    },
+    "order_b": {
+      "approve_id": "332ad529-7303-4c3d-acd1-fa890c778db9",
+      "revise": 2
+    }
+  }
+}

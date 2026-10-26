@@ -1,0 +1,14 @@
+{
+  "test_id": "T-39",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:39.559980+00:00",
+  "actual": "Xac minh HTTPS profile voi Lab Root CA (ssl.CERT_REQUIRED, check_hostname=True): ket noi TLSv1.3 thanh cong tren https://127.0.0.1:34543/auth/login (HTTP 200), Set-Cookie co Secure va SameSite=Lax; trang loi 403 khong lo SECRET_KEY.",
+  "details": {
+    "tls_version": "TLSv1.3",
+    "cert_subject": "((('commonName', '127.0.0.1'),),)",
+    "login_https_status": 200,
+    "set_cookie_flags_verified": true,
+    "error_page_status": 403
+  }
+}

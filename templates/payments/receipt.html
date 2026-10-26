@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Biên nhận {{ execution.receipt_id }} — SecurePay{% endblock %}
+{% block content %}
+<div class="receipt-page">
+  <a href="/requests/{{ payment_request.id }}" class="back-link">← Quay lại yêu cầu</a>
+  <section class="receipt-sheet">
+    <div class="receipt-success-mark">✓</div>
+    <span class="receipt-eyebrow">THANH TOÁN ĐÃ ĐƯỢC GHI NHẬN</span>
+    <h1>Thực hiện thành công</h1>
+    <p class="receipt-subtitle">Giao dịch thanh toán nội bộ</p>
+
+    <div class="receipt-amount">
+      <span>SỐ TIỀN</span>
+      <strong>{{ execution.amount_vnd }} <small>{{ execution.currency }}</small></strong>
+    </div>
+
+    <div class="receipt-party">
+      <div class="company-avatar">{{ execution.beneficiary_name_snapshot|slice:":1" }}</div>
+      <div><span>NGƯỜI THỤ HƯỞNG</span><strong>{{ execution.beneficiary_name_snapshot }}</strong><p>{{ execution.bank_name_snapshot }} · {{ execution.account_number_snapshot }}</p></div>
+    </div>
+
+    <div class="receipt-meta-grid">
+      <div><span>Người thực hiện</span><strong>{{ execution.executor.display_name }}</strong></div>
+      <div><span>Thời gian</span><strong>{{ execution.executed_at|date:"H:i, d/m/Y" }}</strong></div>
+      <div><span>Mã yêu cầu</span><strong>{{ payment_request.request_code }}</strong></div>
+      <div><span>Phiên bản</span><strong>{{ execution.payment_revision.revision_number }}</strong></div>
+    </div>
+
+    <div class="receipt-id-box">
+      <span>MÃ BIÊN NHẬN</span>
+      <strong class="mono" id="receipt-id">{{ execution.receipt_id }}</strong>
+    </div>
+
+    <details class="receipt-technical">
+      <summary>Thông tin đối chiếu kỹ thuật</summary>
+      <dl>
+        <div><dt>Mã toàn vẹn SHA-256</dt><dd class="mono">{{ execution.content_digest }}</dd></div>
+        <div><dt>Khóa chống ghi nhận trùng</dt><dd class="mono">{{ execution.idempotency_key }}</dd></div>
+        <div><dt>Người thực hiện</dt><dd>{{ execution.executor.username }} · {{ execution.executor_person_id }}</dd></div>
+      </dl>
+    </details>
+
+    <div class="receipt-actions">
+      <a href="/requests/{{ payment_request.id }}" class="btn btn-primary">Xem yêu cầu</a>
+      <a href="/requests" class="btn btn-ghost">Về danh sách</a>
+    </div>
+    <p class="receipt-footnote">Biên nhận điện tử được tạo bởi SecurePay.</p>
+  </section>
+</div>
+{% endblock %}

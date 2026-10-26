@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Quản trị an ninh — SecurePay{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">AN NINH HỆ THỐNG</p><h1>Quản trị tài khoản</h1><p class="page-subtitle">Theo dõi và xử lý quyền truy cập khi có sự cố.</p></div></section>
+<div class="data-card standard-data-card">
+  <div class="alert alert-info">
+    Theo dõi trạng thái tài khoản, đình chỉ quyền truy cập hoặc thu hồi các phiên đang hoạt động khi phát hiện sự cố.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tài khoản</th>
+        <th>Mã nhân sự</th>
+        <th>Vai trò</th>
+        <th>Trạng thái</th>
+        <th>Phiên bản bảo mật</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td><strong>{{ u.display_name }}</strong><br><code>{{ u.username }}</code></td>
+        <td><code>{{ u.person_id }}</code></td>
+        <td><span class="badge badge-pending">{{ u.get_role_display }}</span></td>
+        <td>
+          {% if u.is_suspended %}
+            <span class="badge badge-danger">Đã đình chỉ</span><br>
+            <small>{{ u.suspension_reason }}</small>
+          {% elif u.is_active %}
+            <span class="badge badge-approved">Đang hoạt động</span>
+          {% else %}
+            <span class="badge badge-danger">Ngừng kích hoạt</span>
+          {% endif %}
+        </td>
+        <td><code class="mono">{{ u.security_epoch }}</code></td>
+        <td>
+          <form method="post" action="/security/users/{{ u.id }}/challenges" style="display:flex;gap:6px;flex-wrap:wrap;">
+            {% csrf_token %}
+            <select name="action" class="form-control" style="width:auto;">
+              <option value="SUSPEND">Đình chỉ tài khoản</option>
+              <option value="REVOKE_ALL">Thu hồi tất cả phiên</option>
+            </select>
+            <input type="text" name="reason" class="form-control" placeholder="Lý do sự cố..." required style="width:200px;">
+            <button type="submit" class="btn btn-warning">Tiếp tục</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if open_challenges %}
+<div class="card">
+  <h3>Xác nhận thao tác an ninh</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Mã xác nhận</th>
+        <th>Tài khoản và thao tác</th>
+        <th>Lý do</th>
+        <th>Hết hạn</th>
+        <th>Mã OTP</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ch in open_challenges %}
+      <tr>
+        <td class="mono">{{ ch.id }}</td>
+        <td>
+          <strong>{% if ch.action == 'SUSPEND' %}Đình chỉ{% else %}Thu hồi phiên{% endif %}</strong> — {{ ch.target_user.display_name }}
+        </td>
+        <td>{{ ch.reason_text }}</td>
+        <td>{{ ch.expires_at|date:"Y-m-d H:i:s" }}</td>
+        <td>
+          <form method="post" action="{% if ch.action == 'SUSPEND' %}/security/users/{{ ch.target_user_id }}/suspend{% else %}/security/users/{{ ch.target_user_id }}/revoke-all{% endif %}">
+            {% csrf_token %}
+            <input type="hidden" name="challenge_id" value="{{ ch.id }}">
+            <input type="hidden" name="nonce" value="{{ ch.nonce }}">
+            <input type="hidden" name="reason" value="{{ ch.reason_text }}">
+            <div style="display:flex;gap:6px;">
+              <input type="text" name="otp_token" class="form-control mono" placeholder="OTP 6 số" maxlength="6" required style="width:120px;">
+              <button type="submit" class="btn btn-danger">Xác nhận</button>
+            </div>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}
+

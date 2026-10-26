@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor Attacker as Kẻ Gian (Chiếm toàn bộ tài khoản + TOTP của Nam)
+    actor Huong as Hương (CONTROLLER độc lập)
+    actor Admin as An (SECURITY_ADMIN)
+    actor Lan as Lan (REQUESTER)
+    participant Web as Django Server (Services)
+    participant DB as PostgreSQL + SecurityMutex(1)
+
+    Note over Attacker,DB: Tình huống 1 (T-12): Tài khoản DIRECTOR (Nam) bị chiếm hoàn toàn (cả Password + TOTP)
+    Attacker->>Web: Đăng nhập + MFA hợp lệ dưới danh nghĩa Nam -> Duyệt R1 (slot DIRECTOR)
+    Web->>DB: Lock Mutex(1) -> Ghi nhận 1 phiếu slot DIRECTOR (1/2 phiếu)
+    Attacker->>Web: Thử duyệt tiếp slot CONTROLLER hoặc tự gọi execute-simulated
+    Web->>DB: Lock Mutex(1) -> Từ chối vì sai role/trùng person_id và DIRECTOR không có quyền execute
+    Web-->>Attacker: 403 FORBIDDEN (Không thể tự hoàn tất quy trình 2 người)
+
+    Note over Huong,DB: Tình huống 2 (T-25, D-04): Giả sử R2 đã có đủ 2 phiếu nhưng phát hiện tài khoản Nam bị lộ trước khi Lan kịp thực thi
+    Admin->>Web: POST /security/users/{nam_id}/challenges (action=SUSPEND, reason="Nghi lộ TOTP")
+    Web->>DB: Lock Mutex(1) -> Cấp Challenge quản trị C_Admin
+    Admin->>Web: POST /security/users/{nam_id}/suspend (C_Admin + TOTP mới của Admin)
+    Web->>DB: Lock Mutex(1) -> Nam: is_suspended=True, security_epoch += 1; Phiếu của Nam -> INVALIDATED_BY_INCIDENT; R2 -> HOLD
+
+    Lan->>Web: POST /requests/{r2_id}/execute-simulated (Lan thử thực thi R2)
+    Web->>DB: Lock Mutex(1) -> Final Gate phát hiện R2 đang HOLD và approver_epoch của Nam đã thay đổi
+    Web-->>Lan: 409 PRINCIPAL_REVOKED (Chặn thực thi tại Final Gate)
+

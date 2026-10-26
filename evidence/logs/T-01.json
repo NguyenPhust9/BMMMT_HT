@@ -1,0 +1,20 @@
+{
+  "test_id": "T-01",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:11.769028+00:00",
+  "actual": "DRAFT -> PENDING_APPROVAL -> APPROVED -> EXECUTED_SIMULATED thanh cong; 2 Approval doc lap (nam, huong) cung revision 1; PaymentExecution count=1 (SIM-RCPT-20261024131111-960525CC).",
+  "details": {
+    "request_id": "676e7dce-da38-4401-96d7-d2b08de6649b",
+    "request_code": "REQ-20261024-0001-C8ED",
+    "status": "EXECUTED_SIMULATED",
+    "approval_count": 2,
+    "approver_person_ids": [
+      "PER-HUONG-003",
+      "PER-NAM-002"
+    ],
+    "execution_count": 1,
+    "receipt_id": "SIM-RCPT-20261024131111-960525CC",
+    "content_digest": "2c9068ed249bacd00c769bbf40856f56d2c05dc741f388b904e0508c1ce07bd5"
+  }
+}

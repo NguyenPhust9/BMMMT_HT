@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 06: CHỐNG SỬA NỘI DUNG, TẠO REVISION MỚI &amp; CHẶN PHÁT LẠI (D-03, T-17..T-23)</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Bảo vệ toàn vẹn nội dung đã đóng băng và chống tái sử dụng xác nhận cũ</text>
+<rect x="50" y="100" width="1260" height="120" rx="10" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2.5" />
+<text x="66" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c92a2a">Tình huống A: Thử sửa âm thầm nội dung sau khi đã gửi duyệt (T-19)</text>
+<text x="68" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Yêu cầu R1 (Revision 1: 20.000.000 VND) đã được đóng băng (is_frozen=True) và đã có phiếu duyệt của Giám đốc Nam.</text>
+<text x="68" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Kẻ tấn công hoặc client gửi request sửa trực tiếp amount_vnd=50.000.000 hoặc đổi số tài khoản trên Revision 1.</text>
+<text x="68" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Server từ chối ngay lập tức (409 SNAPSHOT_MISMATCH / IMMUTABLE_REVISION) và ghi AuditEvent DENIED; dữ liệu Revision 1 giữ nguyên.</text>
+<rect x="50" y="250" width="1260" height="140" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="66" y="280" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">Tình huống B: Sửa đổi đúng quy trình tạo Revision 2 làm vô hiệu hóa toàn bộ xác nhận cũ (T-20)</text>
+<text x="68" y="308" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Kế toán Lan gọi chức năng Revise hợp lệ để đổi số tiền sang 25.000.000 VND.</text>
+<text x="68" y="332" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Dưới khóa Mutex(1), Server tạo PaymentRevision(revision_number=2) mới ở trạng thái DRAFT.</text>
+<text x="68" y="356" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Toàn bộ Approval của Revision 1 bị chuyển sang SUPERSEDED_BY_REVISION và các ActionChallenge cũ bị vô hiệu hóa.</text>
+<text x="68" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Yêu cầu buộc phải Submit lại Revision 2 (sinh content_digest mới D2) và xin lại từ đầu đủ 2 phiếu duyệt mới.</text>
+<rect x="50" y="420" width="1260" height="250" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" />
+<text x="66" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1971c2">Tình huống C: Chặn dùng chéo ngữ cảnh, hết hạn và phát lại Challenge / TOTP (T-16, T-17, T-21..T-23)</text>
+<text x="68" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Thử lấy Challenge của người khác (T-16) hoặc lấy Challenge APPROVE đem gọi EXECUTE / đổi sang Request khác (T-17) -&gt; Bị chặn 403/409 WRONG_SCOPE.</text>
+<text x="68" y="502" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Thử gửi Challenge sau 120 giây theo giờ UTC của Server dù chỉnh lùi đồng hồ trình duyệt (T-21) -&gt; Bị chặn 409 CHALLENGE_EXPIRED.</text>
+<text x="68" y="526" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Thử gửi lại Challenge đã consumed (T-22) -&gt; Bị chặn 409 CHALLENGE_USED.</text>
+<text x="68" y="550" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">- Thử dùng lại cùng mã TOTP 6 số vừa dùng đăng nhập/duyệt trong cùng timestep 30 giây (T-23, T-34) -&gt; Bị chặn 400/409 OTP_REPLAY.</text>
+<line x1="680" y1="220" x2="680" y2="250" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="229" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Bắt buộc tạo Revision mới</text>
+<line x1="680" y1="390" x2="680" y2="420" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="399" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Kiểm tra Scope &amp; Replay</text>
+</svg>

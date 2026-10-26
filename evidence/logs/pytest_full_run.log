@@ -1,0 +1,59 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.5, pytest-8.3.4, pluggy-1.5.0 -- G:\BMMMT_HT\securepay_lab\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+django: version: 5.2.14, settings: config.settings (from env)
+rootdir: G:\BMMMT_HT\securepay_lab
+configfile: pytest.ini
+plugins: django-4.11.1, anyio-4.11.0
+collecting ... collected 40 items
+
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t01_valid_flow_and_single_receipt PASSED [  2%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t02_single_approval_cannot_execute PASSED [  5%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t03_reject_is_terminal PASSED [  7%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t04_cancel_ownership_and_terminal_state PASSED [ 10%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t05_lookalike_display_name_and_avatar_grant_no_authority PASSED [ 12%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t06_client_cannot_inject_role_verified_or_state PASSED [ 15%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t07_no_self_approval_or_duplicate_approver_slot PASSED [ 17%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t08_idor_other_requester_blocked PASSED [ 20%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t09_security_admin_has_no_financial_authority_and_no_django_admin PASSED [ 22%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t10_password_only_session_cannot_access_protected_actions PASSED [ 25%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t11_stolen_session_requires_fresh_auth_and_logout_invalidates_challenges PASSED [ 27%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t12_single_compromised_approver_cannot_complete_payment PASSED [ 30%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t13_otp_and_password_throttling_persist_across_sessions PASSED [ 32%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t14_no_self_service_factor_or_role_change_routes PASSED [ 35%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t15_recovery_is_offline_only_and_increments_epoch PASSED [ 37%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t16_challenge_bound_to_actor PASSED [ 40%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t17_challenge_bound_to_request_and_action PASSED [ 42%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t18_unverified_or_revoked_beneficiary_blocked PASSED [ 45%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t19_frozen_submitted_revision_cannot_be_silently_modified PASSED [ 47%]
+tests/test_suite_t01_t20.py::TestSuiteT01ToT20::test_t20_new_revision_invalidates_prior_approvals_and_challenges PASSED [ 50%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t21_server_clock_expiry_and_boundary_cases PASSED [ 52%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t22_consumed_challenge_replay_blocked_and_idempotent_retry_returns_receipt PASSED [ 55%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t23_totp_timestep_cannot_be_reused PASSED [ 57%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t24_direct_api_call_enforces_db_conditions_and_executor_identity PASSED [ 60%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t25_suspend_before_execute_moves_request_to_hold_and_blocks_execution PASSED [ 62%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t26_revoked_approver_role_invalidates_prior_approval_at_final_gate PASSED [ 65%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t27_mfa_factor_rotation_bumps_epoch_and_invalidates_prior_authority PASSED [ 67%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t28_beneficiary_version_change_or_revocation_blocks_execution_at_final_gate PASSED [ 70%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t29_executed_simulated_is_immutable_and_cannot_be_re_executed_with_new_key PASSED [ 72%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t30_concurrent_execute_same_idempotency_key_single_effect PASSED [ 75%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t31_concurrent_execute_different_keys_still_single_execution PASSED [ 77%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t32_concurrent_approve_and_revise_both_lock_orders PASSED [ 80%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t33_concurrent_approve_and_reject_ends_in_rejected PASSED [ 82%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t34_two_concurrent_challenges_racing_same_totp_timestep PASSED [ 85%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t35_execute_and_revoke_both_commit_orders PASSED [ 87%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t36_csrf_and_http_method_enforcement PASSED [ 90%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t37_vnd_validation_and_safe_xss_escaping PASSED [ 92%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t38_audit_scoping_immutability_and_zero_secret_leaks PASSED [ 95%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t39_https_tls_profile_and_secure_cookie_flags PASSED [ 97%]
+tests/test_suite_t21_t40.py::TestSuiteT21ToT40::test_t40_mid_transaction_fault_injection_rolls_back_atomically PASSED [100%]
+
+============================== warnings summary ===============================
+tests/test_suite_t01_t20.py: 20 warnings
+tests/test_suite_t21_t40.py: 20 warnings
+  G:\BMMMT_HT\securepay_lab\.venv\Lib\site-packages\django\core\handlers\base.py:61: UserWarning: No directory at: G:\BMMMT_HT\securepay_lab\staticfiles\
+    mw_instance = middleware(adapted_handler)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 40 passed, 40 warnings in 99.20s (0:01:39) ==================
+

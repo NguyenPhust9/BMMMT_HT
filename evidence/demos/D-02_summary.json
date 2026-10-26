@@ -1,0 +1,86 @@
+{
+  "demo_id": "D-02",
+  "request_code": "REQ-20261024-0001-90B5",
+  "lookalike_http": 403,
+  "lookalike_error": "FORBIDDEN",
+  "stolen_session_no_otp_http": 400,
+  "compromised_nam_slot1_approved": true,
+  "independent_huong_reject_http": 200,
+  "lan_execute_after_reject_http": 409,
+  "final_status": "REJECTED",
+  "execution_count": 0,
+  "audit_timeline": [
+    {
+      "action": "CREATE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "NONE",
+      "after_state": "DRAFT"
+    },
+    {
+      "action": "SUBMIT_PAYMENT_REQUEST",
+      "actor_username_snapshot": "lan",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "DRAFT",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "nam_lookalike",
+      "result": "DENIED",
+      "reason_code": "FORBIDDEN",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "nam",
+      "result": "DENIED",
+      "reason_code": "OTP_INVALID",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "APPROVE_PAYMENT_REQUEST",
+      "actor_username_snapshot": "nam",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "PENDING_APPROVAL"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "huong",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "",
+      "after_state": ""
+    },
+    {
+      "action": "REJECT_PAYMENT_REQUEST",
+      "actor_username_snapshot": "huong",
+      "result": "SUCCESS",
+      "reason_code": "OK",
+      "before_state": "PENDING_APPROVAL",
+      "after_state": "REJECTED"
+    },
+    {
+      "action": "ISSUE_PAYMENT_CHALLENGE",
+      "actor_username_snapshot": "lan",
+      "result": "DENIED",
+      "reason_code": "TERMINAL_STATE",
+      "before_state": "",
+      "after_state": ""
+    }
+  ]
+}

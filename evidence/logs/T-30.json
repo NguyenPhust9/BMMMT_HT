@@ -1,0 +1,24 @@
+{
+  "test_id": "T-30",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:19.743295+00:00",
+  "actual": "Hai worker PostgreSQL doc lap cung gui idempotency_key='IDEMP-T30-SAME' qua Barrier(2): 1 worker tao moi (is_replay=False), 1 worker nhan ket qua idempotent (is_replay=True), cung receipt=SIM-RCPT-20261024131354-3FEAD71D, PaymentExecution COUNT=1.",
+  "details": {
+    "worker_results": [
+      {
+        "worker": 2,
+        "status": "OK",
+        "receipt": "SIM-RCPT-20261024131354-3FEAD71D",
+        "is_replay": false
+      },
+      {
+        "worker": 1,
+        "status": "OK",
+        "receipt": "SIM-RCPT-20261024131354-3FEAD71D",
+        "is_replay": true
+      }
+    ],
+    "execution_count": 1
+  }
+}

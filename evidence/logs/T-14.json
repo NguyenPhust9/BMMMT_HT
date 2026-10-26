@@ -1,0 +1,16 @@
+{
+  "test_id": "T-14",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:40.532778+00:00",
+  "actual": "Moi duong dan tu doi MFA factor/role qua HTTP deu bi chan HTTP 403 ({'/auth/reset-mfa': 403, '/reset-mfa': 403, '/auth/change-factor': 403, '/auth/change-role': 403}); TOTPDevice va security_epoch (1) giu nguyen.",
+  "details": {
+    "probed_routes": {
+      "/auth/reset-mfa": 403,
+      "/reset-mfa": 403,
+      "/auth/change-factor": 403,
+      "/auth/change-role": 403
+    },
+    "security_epoch": 1
+  }
+}

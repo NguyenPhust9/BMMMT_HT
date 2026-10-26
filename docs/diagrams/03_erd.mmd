@@ -1,0 +1,117 @@
+erDiagram
+    EmployeeIdentity ||--o{ TOTPDevice : "owns"
+    EmployeeIdentity ||--o{ PaymentRequest : "creates (requester)"
+    EmployeeIdentity ||--o{ ActionChallenge : "requests (actor)"
+    EmployeeIdentity ||--o{ Approval : "signs (approver)"
+    EmployeeIdentity ||--o{ PaymentExecution : "executes (executor)"
+    EmployeeIdentity ||--o{ AuditEvent : "triggers"
+
+    Beneficiary ||--|{ BeneficiaryVersion : "has immutable versions"
+    Beneficiary ||--o| BeneficiaryVersion : "points to active_version"
+
+    PaymentRequest ||--|{ PaymentRevision : "has revisions"
+    PaymentRequest ||--o| PaymentRevision : "current_revision"
+    PaymentRequest ||--o| PaymentExecution : "at most 1 execution"
+    PaymentRequest ||--o{ Approval : "collects"
+    PaymentRequest ||--o{ ActionChallenge : "binds"
+    PaymentRequest ||--o{ AuditEvent : "logged in"
+
+    BeneficiaryVersion ||--o{ PaymentRevision : "referenced by"
+    PaymentRevision ||--o{ Approval : "approved on"
+    PaymentRevision ||--o{ ActionChallenge : "scoped to"
+    PaymentRevision ||--o| PaymentExecution : "executed on"
+
+    ActionChallenge ||--o| Approval : "consumed by"
+    ActionChallenge ||--o| PaymentExecution : "consumed by"
+
+    EmployeeIdentity {
+        uuid id PK
+        string username UK
+        string person_id UK
+        string display_name
+        string role
+        boolean is_active
+        boolean is_suspended
+        int security_epoch
+    }
+
+    Beneficiary {
+        uuid id PK
+        string code UK
+        string status
+        uuid active_version_id FK
+        int registry_epoch
+    }
+
+    BeneficiaryVersion {
+        uuid id PK
+        uuid beneficiary_id FK
+        int version_number
+        string vendor_name
+        string bank_name
+        string account_number
+        string status
+    }
+
+    PaymentRequest {
+        uuid id PK
+        string request_code UK
+        uuid requester_id FK
+        string requester_person_id
+        uuid current_revision_id FK
+        string status
+        datetime submitted_at
+        datetime expires_at
+    }
+
+    PaymentRevision {
+        uuid id PK
+        uuid payment_request_id FK
+        int revision_number
+        bigint amount_vnd
+        uuid beneficiary_version_id FK
+        string account_number_snapshot
+        string content_digest
+        boolean is_frozen
+    }
+
+    ActionChallenge {
+        uuid id PK
+        string nonce UK
+        uuid actor_id FK
+        string session_key_hash
+        int actor_epoch
+        string action
+        uuid payment_revision_id FK
+        string content_digest
+        datetime expires_at
+        datetime consumed_at
+    }
+
+    Approval {
+        uuid id PK
+        uuid payment_revision_id FK
+        uuid approver_id FK
+        string approver_person_id
+        string slot
+        string content_digest
+        int approver_epoch_at_signing
+        int requester_epoch_at_signing
+        string status
+    }
+
+    PaymentExecution {
+        uuid id PK
+        uuid payment_request_id UK
+        uuid payment_revision_id FK
+        uuid executor_id FK
+        string idempotency_key
+        string receipt_id UK
+        string execution_label
+        datetime executed_at
+    }
+
+    SecurityMutex {
+        int id PK
+    }
+

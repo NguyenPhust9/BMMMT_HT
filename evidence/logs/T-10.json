@@ -1,0 +1,13 @@
+{
+  "test_id": "T-10",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:30.980497+00:00",
+  "actual": "Sau buoc mat khau (/auth/login -> MFA_REQUIRED), phien pre-auth goi /challenges bi chan HTTP 401 (MFA_REQUIRED); Approval count=0.",
+  "details": {
+    "step1_reason_code": "MFA_REQUIRED",
+    "challenge_http_without_mfa": 401,
+    "reason_code": "MFA_REQUIRED",
+    "approval_count": 0
+  }
+}

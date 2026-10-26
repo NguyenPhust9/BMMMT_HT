@@ -1,0 +1,23 @@
+{
+  "test_id": "T-31",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:22.466097+00:00",
+  "actual": "Hai worker PostgreSQL doc lap voi 2 idempotency_key khac nhau (IDEMP-T31-KEY-A, IDEMP-T31-KEY-B) va 2 challenge/timestep hop le cung tranh chap R1: 1 worker EXECUTED, 1 worker REJECTED (IDEMPOTENCY_CONFLICT); PaymentExecution COUNT=1.",
+  "details": {
+    "worker_results": [
+      {
+        "worker": 1,
+        "outcome": "EXECUTED",
+        "receipt": "SIM-RCPT-20261024131432-D9BA04C4",
+        "is_replay": false
+      },
+      {
+        "worker": 2,
+        "outcome": "REJECTED",
+        "reason_code": "IDEMPOTENCY_CONFLICT"
+      }
+    ],
+    "execution_count": 1
+  }
+}

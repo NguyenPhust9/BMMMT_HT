@@ -1,0 +1,18 @@
+{
+  "test_id": "T-33",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:25.727264+00:00",
+  "actual": "Ca 2 thu tu tranh chap approve/reject deu ket thuc REJECTED va PaymentExecution=0: Case 1={'huong': 'REJECTED', 'nam': 'TERMINAL_STATE'}, Case 2={'nam': 'APPROVED_SLOT_1', 'huong': 'REJECTED'}.",
+  "details": {
+    "case1_reject_first": {
+      "huong": "REJECTED",
+      "nam": "TERMINAL_STATE"
+    },
+    "case2_approve_first": {
+      "nam": "APPROVED_SLOT_1",
+      "huong": "REJECTED"
+    },
+    "execution_count": 0
+  }
+}

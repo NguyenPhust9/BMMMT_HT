@@ -1,0 +1,34 @@
+stateDiagram-v2
+    [*] --> DRAFT : REQUESTER tạo yêu cầu (Revision 1)
+    DRAFT --> DRAFT : Sửa bản nháp
+    DRAFT --> PENDING_APPROVAL : REQUESTER gửi duyệt (Submit)\n[Đóng băng Snapshot + Digest + Hạn 24h]
+
+    PENDING_APPROVAL --> PENDING_APPROVAL : 1/2 người duyệt hợp lệ\n(DIRECTOR hoặc CONTROLLER + Challenge + OTP mới)
+    PENDING_APPROVAL --> APPROVED : Đủ 2/2 người duyệt độc lập\n(DIRECTOR + CONTROLLER cùng Revision & Digest)
+
+    PENDING_APPROVAL --> REJECTED : DIRECTOR / CONTROLLER từ chối\n(Challenge REJECT + OTP mới + Lý do)
+    APPROVED --> REJECTED : DIRECTOR / CONTROLLER từ chối trước khi thực thi
+
+    DRAFT --> CANCELLED : REQUESTER hủy yêu cầu
+    PENDING_APPROVAL --> CANCELLED : REQUESTER hủy yêu cầu
+    APPROVED --> CANCELLED : REQUESTER hủy yêu cầu
+    HOLD --> CANCELLED : REQUESTER hủy yêu cầu
+
+    PENDING_APPROVAL --> HOLD : Sự cố an ninh\n(Suspend / Revoke_all / Đổi Role / Đổi MFA / Thu hồi Beneficiary)
+    APPROVED --> HOLD : Sự cố an ninh\n(Vô hiệu hóa phiếu liên quan, chặn Final Gate)
+
+    PENDING_APPROVAL --> DRAFT : REQUESTER tạo Revision mới (N+1)\n[Hủy hiệu lực mọi Approval & Challenge cũ]
+    APPROVED --> DRAFT : REQUESTER tạo Revision mới (N+1)\n[Hủy hiệu lực mọi Approval & Challenge cũ]
+    HOLD --> DRAFT : REQUESTER tạo Revision mới sau khi khắc phục nguyên nhân
+
+    PENDING_APPROVAL --> EXPIRED : Quá 24h theo giờ Server UTC
+    APPROVED --> EXPIRED : Quá 24h theo giờ Server UTC
+    HOLD --> EXPIRED : Quá 24h theo giờ Server UTC
+
+    APPROVED --> EXECUTED_SIMULATED : REQUESTER thực thi mô phỏng\n[Final Gate + Challenge EXECUTE + OTP mới + SecurityMutex]
+
+    REJECTED --> [*]
+    CANCELLED --> [*]
+    EXPIRED --> [*]
+    EXECUTED_SIMULATED --> [*]
+

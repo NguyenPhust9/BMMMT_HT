@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 05: TRÌNH TỰ LUỒNG HỢP LỆ — 2 NGƯỜI DUYỆT ĐỘC LẬP &amp; THỰC THI MÔ PHỎNG (D-01, T-01)</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Lan (REQUESTER) lập -&gt; Nam (DIRECTOR) duyệt -&gt; Hương (CONTROLLER) duyệt -&gt; Lan thực thi mô phỏng</text>
+<rect x="50" y="100" width="1260" height="100" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" />
+<text x="66" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1971c2">Bước 1: Kế toán Lan (REQUESTER) tạo và gửi yêu cầu thanh toán R1</text>
+<text x="68" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1.1 Lan chọn Beneficiary B1 (VERIFIED), nhập 20.000.000 VND và trích dẫn tin nhắn ('Nguồn ngoài — chưa xác minh').</text>
+<text x="68" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1.2 Lan bấm Gửi duyệt (POST /requests/{id}/submit) -&gt; Server khóa Mutex(1), chụp snapshot tài khoản nhận, tính SHA-256 content_digest, chuyển sang PENDING_APPROVAL.</text>
+<rect x="50" y="220" width="1260" height="110" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="66" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">Bước 2: Giám đốc Nam (DIRECTOR) đối chiếu và phê duyệt độc lập (Phiếu 1/2)</text>
+<text x="68" y="278" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">2.1 Nam mở trang chi tiết đã đóng băng, kiểm tra số tiền/STK, yêu cầu cấp ActionChallenge loại APPROVE_DIRECTOR (TTL 120s).</text>
+<text x="68" y="302" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">2.2 Nam nhập mã TOTP mới -&gt; Server khóa Mutex(1), kiểm tra TOTP (last_t), tạo Approval(slot=DIRECTOR). Nếu Lan thử thực thi lúc này sẽ bị chặn 409 MISSING_APPROVAL (T-02).</text>
+<rect x="50" y="350" width="1260" height="110" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="2.5" />
+<text x="66" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#6741d9">Bước 3: Kiểm soát viên Hương (CONTROLLER) đối chiếu và phê duyệt độc lập (Phiếu 2/2)</text>
+<text x="68" y="408" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">3.1 Hương yêu cầu cấp ActionChallenge loại APPROVE_CONTROLLER gắn đúng Revision 1 và content_digest.</text>
+<text x="68" y="432" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">3.2 Hương nhập mã TOTP mới -&gt; Server khóa Mutex(1), kiểm tra person_id khác Lan và khác Nam, tạo Approval(slot=CONTROLLER), chuyển trạng thái sang APPROVED.</text>
+<rect x="50" y="480" width="1260" height="190" rx="10" fill="#ebfbee" stroke="#2f9e44" stroke-width="2.5" />
+<text x="66" y="510" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2f9e44">Bước 4: Kế toán Lan (REQUESTER) xác thực Step-Up MFA mới và Thực thi mô phỏng</text>
+<text x="68" y="538" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4.1 Lan yêu cầu ActionChallenge loại EXECUTE cho yêu cầu R1 của chính mình.</text>
+<text x="68" y="562" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4.2 Lan gửi POST /requests/{id}/execute-simulated kèm Challenge EXECUTE + mã TOTP mới của Lan + Idempotency-Key.</text>
+<text x="68" y="586" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4.3 Server khóa Mutex(1), chạy Final Gate (kiểm tra lại cả 3 tài khoản, 2 phiếu, epoch, digest, beneficiary), tạo đúng 1 PaymentExecution (SIMULATED) + AuditEvent.</text>
+<text x="68" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">4.4 Nếu Lan gửi lại cùng Idempotency-Key, hệ thống trả về đúng biên nhận cũ mà không tạo bản ghi thực thi thứ hai (T-30).</text>
+<line x1="680" y1="200" x2="680" y2="220" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="204" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">PENDING (0/2)</text>
+<line x1="680" y1="330" x2="680" y2="350" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="334" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">PENDING (1/2)</text>
+<line x1="680" y1="460" x2="680" y2="480" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="680" y="464" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">APPROVED (2/2)</text>
+</svg>

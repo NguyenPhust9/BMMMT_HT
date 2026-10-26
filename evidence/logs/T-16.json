@@ -1,0 +1,12 @@
+{
+  "test_id": "T-16",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:46.296331+00:00",
+  "actual": "Challenge C1 cap cho Nam khi bi Huong su dung (kem OTP hop le cua Huong) bi tu choi HTTP 403 (WRONG_SCOPE); Approval count=0.",
+  "details": {
+    "http_status": 403,
+    "reason_code": "WRONG_SCOPE",
+    "approval_count": 0
+  }
+}

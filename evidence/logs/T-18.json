@@ -1,0 +1,13 @@
+{
+  "test_id": "T-18",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:49.686560+00:00",
+  "actual": "Tao yeu cau voi BEN-003 (PENDING) bi HTTP 400 (BENEFICIARY_INVALID), BEN-004 (REVOKED) bi HTTP 400 (BENEFICIARY_INVALID), chen account_number_override tu khai bi HTTP 400 (FORBIDDEN); Request count=0.",
+  "details": {
+    "pending_http": 400,
+    "revoked_http": 400,
+    "custom_account_http": 400,
+    "request_count": 0
+  }
+}

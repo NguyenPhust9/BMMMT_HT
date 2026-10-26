@@ -1,0 +1,15 @@
+{
+  "test_id": "T-05",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:11:21.429241+00:00",
+  "actual": "Tai khoan nam_lookalike (display_name='Nguyễn Văn Nam (Giám đốc)', person_id='PER-FAKE-006') xin challenge APPROVE_DIRECTOR bi HTTP 403 (FORBIDDEN); Approval count=0; AuditEvent ghi nhan actor=nam_lookalike (PER-FAKE-006).",
+  "details": {
+    "fake_username": "nam_lookalike",
+    "fake_display_name": "Nguyễn Văn Nam (Giám đốc)",
+    "fake_role": "UNPRIVILEGED",
+    "http_status": 403,
+    "reason_code": "FORBIDDEN",
+    "approval_count": 0
+  }
+}

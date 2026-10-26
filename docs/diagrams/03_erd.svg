@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#495057" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="1400" height="720" fill="#ffffff" />
+<rect x="15" y="15" width="1370" height="690" rx="12" fill="#fcfcfc" stroke="#dee2e6" stroke-width="2" />
+<text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1864ab">SƠ ĐỒ 03: MÔ HÌNH DỮ LIỆU QUAN HỆ (ERD) TRÊN POSTGRESQL</text>
+<text x="40" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#495057">Các thực thể cốt lõi, khóa ngoại bảo vệ (PROTECT) và ràng buộc toàn vẹn dữ liệu</text>
+<rect x="40" y="100" width="420" height="250" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" />
+<text x="56" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1971c2">EmployeeIdentity &amp; TOTPDevice</text>
+<text x="58" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PK id (UUID) | UK username | UK person_id</text>
+<text x="58" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">role (REQUESTER/DIRECTOR/CONTROLLER/SECURITY_ADMIN)</text>
+<text x="58" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">is_active, is_suspended, security_epoch (int &gt;= 1)</text>
+<text x="58" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">failed_password_attempts, failed_otp_attempts</text>
+<text x="58" y="254" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">1..* -&gt; TOTPDevice (confirmed, last_t anti-replay)</text>
+<rect x="490" y="100" width="420" height="250" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" />
+<text x="506" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#f08c00">Beneficiary &amp; BeneficiaryVersion</text>
+<text x="508" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">Beneficiary: PK id | UK code | status | active_version_id</text>
+<text x="508" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">BeneficiaryVersion (Bất biến sau khi tạo):</text>
+<text x="508" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  PK id | FK beneficiary_id | version_number</text>
+<text x="508" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  vendor_name, bank_name, account_number</text>
+<text x="508" y="254" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  status (PENDING / VERIFIED / REVOKED)</text>
+<rect x="940" y="100" width="420" height="250" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="2.5" />
+<text x="956" y="130" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#6741d9">ActionChallenge (120s TTL, One-Time)</text>
+<text x="958" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PK id | UK nonce | FK actor_id | actor_epoch</text>
+<text x="958" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">session_key_hash | device_id | action</text>
+<text x="958" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">FK payment_request_id | FK payment_revision_id</text>
+<text x="958" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">content_digest | FK beneficiary_version_id</text>
+<text x="958" y="254" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">expires_at | consumed_at | invalidated_at</text>
+<rect x="40" y="400" width="420" height="280" rx="10" fill="#ebfbee" stroke="#2f9e44" stroke-width="2.5" />
+<text x="56" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#2f9e44">PaymentRequest &amp; PaymentRevision</text>
+<text x="58" y="458" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PaymentRequest: PK id | UK request_code</text>
+<text x="58" y="482" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  FK requester_id | requester_person_id</text>
+<text x="58" y="506" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  FK current_revision_id | status | expires_at</text>
+<text x="58" y="530" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PaymentRevision (Đóng băng khi Submit):</text>
+<text x="58" y="554" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  PK id | FK payment_request_id | revision_number</text>
+<text x="58" y="578" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  amount_vnd (&gt;0) | snapshot bank/account/name</text>
+<text x="58" y="602" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  source_kind, source_excerpt | content_digest</text>
+<rect x="490" y="400" width="420" height="280" rx="10" fill="#fff0f6" stroke="#c2255c" stroke-width="2.5" />
+<text x="506" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#c2255c">Approval (2 Slot Độc Lập)</text>
+<text x="508" y="458" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PK id | FK payment_revision_id | FK approver_id</text>
+<text x="508" y="482" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">approver_person_id | slot (DIRECTOR / CONTROLLER)</text>
+<text x="508" y="506" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">content_digest | FK challenge_id (OneToOne)</text>
+<text x="508" y="530" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">approver_epoch_at_signing | requester_epoch_at_signing</text>
+<text x="508" y="554" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">status (ACTIVE / SUPERSEDED / INVALIDATED / EXPIRED)</text>
+<text x="508" y="578" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">UK(revision, slot) &amp; UK(revision, approver_person_id)</text>
+<rect x="940" y="400" width="420" height="280" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="2.5" />
+<text x="956" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#343a40">PaymentExecution, AuditEvent &amp; Mutex</text>
+<text x="958" y="458" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">PaymentExecution: PK id | UK payment_request_id (1:1)</text>
+<text x="958" y="482" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  FK payment_revision_id | FK executor_id</text>
+<text x="958" y="506" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  idempotency_key | UK receipt_id | SIMULATED label</text>
+<text x="958" y="530" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">AuditEvent: PK id | actor | action | result | reason_code</text>
+<text x="958" y="554" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">  before_state | after_state | sanitized metadata</text>
+<text x="958" y="578" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#212529">SecurityMutex: PK id=1 (Row lock cho mọi mutation)</text>
+<line x1="250" y1="350" x2="250" y2="400" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="250" y="369" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">1..* tạo Request</text>
+<line x1="680" y1="350" x2="350" y2="400" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="515" y="369" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">Tham chiếu Version</text>
+<line x1="460" y1="520" x2="490" y2="520" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="475" y="514" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">1..* Revision -&gt; Approval</text>
+<line x1="940" y1="250" x2="750" y2="400" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="845" y="319" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">1:1 tiêu thụ Challenge</text>
+<line x1="460" y1="600" x2="940" y2="600" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="700" y="594" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#343a40">1:1 tạo Execution</text>
+</svg>

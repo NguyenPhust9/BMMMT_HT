@@ -1,0 +1,14 @@
+{
+  "test_id": "T-27",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:11.491716+00:00",
+  "actual": "Reset/rotate TOTP factor cua Nam qua recover_principal tang security_epoch (1 -> 2), dua R1 sang HOLD, chan phien cu HTTP 401 va chan Lan execute HTTP 409.",
+  "details": {
+    "old_epoch": 1,
+    "new_epoch": 2,
+    "request_status": "HOLD",
+    "old_session_http": 401,
+    "lan_execute_challenge_http": 409
+  }
+}

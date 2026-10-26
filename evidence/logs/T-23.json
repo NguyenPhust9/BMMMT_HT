@@ -1,0 +1,13 @@
+{
+  "test_id": "T-23",
+  "status": "PASS",
+  "fixture": "default_lab",
+  "recorded_at_utc": "2026-10-24T13:12:00.011776+00:00",
+  "actual": "Sau khi ma TOTP cua Nam duoc chap nhan cho R1 (device.last_t=59761587), dung lai cung ma/timestep cho challenge C2 tren R2 bi tu choi voi OTP_REPLAY; Approval count tren R2 = 0.",
+  "details": {
+    "device_last_t": 59761587,
+    "r1_approval_count": 1,
+    "r2_approval_count": 0,
+    "second_use_reason_code": "OTP_REPLAY"
+  }
+}

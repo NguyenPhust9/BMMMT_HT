@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Không thể thực hiện — SecurePay{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Không thể thực hiện yêu cầu</h2>
+  <p>{{ error_message }}</p>
+  <p>
+    <a href="/requests" class="btn btn-primary">Quay lại danh sách yêu cầu</a>
+    <a href="/auth/login" class="btn btn-secondary">Trang đăng nhập</a>
+  </p>
+</div>
+{% endblock %}
+
