@@ -1,6 +1,9 @@
 {% extends "base.html" %}{% load humanize %}
 {% block title %}Yêu cầu thanh toán — SecurePay{% endblock %}
+{% block head_extra %}<meta http-equiv="refresh" content="3">{% endblock %}
 {% block content %}
+<span id="live-sync-marker" hidden>{% for item in request_items %}{{ item.request.id }}:{{ item.request.updated_at|date:"U.u" }}:{{ item.active_count }};{% endfor %}</span>
+<script src="/static/js/live_sync.js?v=4" defer></script>
 <section class="page-heading"><div><p class="eyebrow">TRUNG TÂM PHÊ DUYỆT</p><h1>Yêu cầu thanh toán</h1><p class="page-subtitle">Theo dõi tiến độ, người đã duyệt và việc cần xử lý.</p></div>{% if current_role == "REQUESTER" %}<a href="/requests/new" class="btn btn-primary create-btn" id="btn-new-request"><i class="fa-solid fa-plus"></i> Tạo yêu cầu</a>{% endif %}</section>
 
 <form class="filter-bar" method="get">
@@ -31,4 +34,34 @@
   </tr>{% endwith %}{% empty %}<tr><td colspan="8"><div class="empty-state"><h3>Chưa có yêu cầu nào</h3><p>Thay đổi bộ lọc hoặc tạo yêu cầu mới.</p></div></td></tr>{% endfor %}
   </tbody></table></div><div class="table-footer"><span>Hiển thị {{ request_items|length }} yêu cầu</span><div><button disabled>‹</button><b>1</b><button disabled>›</button><span>10 / trang⌄</span></div></div>
 </section>
+<div id="live-update-notice" class="live-update-notice" hidden>Đang đồng bộ yêu cầu mới…</div>
+<script>
+  (() => {
+    const marker = document.getElementById("live-sync-marker");
+    let checking = false;
+    setInterval(async () => {
+      if (checking) return;
+      checking = true;
+      try {
+        const response = await fetch(window.location.href, {
+          headers: {"X-Requested-With": "live-sync"},
+          cache: "no-store",
+          credentials: "same-origin"
+        });
+        if (!response.ok) return;
+        const html = await response.text();
+        const next = new DOMParser().parseFromString(html, "text/html").getElementById("live-sync-marker");
+        if (next && next.textContent !== marker.textContent) {
+          const notice = document.getElementById("live-update-notice");
+          notice.hidden = false;
+          window.setTimeout(() => window.location.reload(), 250);
+        }
+      } catch (_) {
+        // Mất kết nối tạm thời không làm gián đoạn thao tác hiện tại.
+      } finally {
+        checking = false;
+      }
+    }, 3000);
+  })();
+</script>
 {% endblock %}

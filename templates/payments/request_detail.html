@@ -1,13 +1,22 @@
 {% extends "base.html" %}
+{% load audit_ui %}
 {% block title %}{{ payment_request.request_code }} — SecurePay{% endblock %}
+{% block head_extra %}{% endblock %}
 {% block content %}
+<span id="live-sync-marker" hidden>{{ payment_request.updated_at|date:"U.u" }}:{{ payment_request.status }}:{{ active_approvals_count }}:{% if activity_events %}{{ activity_events.0.id }}{% endif %}</span>
+<script src="/static/js/live_sync.js?v=4" defer></script>
 <a href="/requests" class="back-link">← Quay lại danh sách</a>
 
-<section class="detail-header">
+<section class="detail-header workflow-header">
   <div>
-    <div class="detail-kicker"><span>{{ payment_request.request_code }}</span><span>•</span><span>Phiên bản {{ current_revision.revision_number }}</span></div>
-    <h1>Đề nghị thanh toán</h1>
-    <p>Tạo bởi {{ payment_request.requester.display_name }} · {{ payment_request.created_at|date:"H:i, d/m/Y" }}</p>
+    <div class="workflow-title-row"><h1>Đề nghị thanh toán</h1><span class="request-purpose-pill">{{ current_revision.purpose }}</span></div>
+    <div class="workflow-meta">
+      <span>ID: <strong>{{ payment_request.request_code }}</strong></span>
+      <span>Người tạo: <strong>{{ payment_request.requester.display_name }}</strong></span>
+      <span>Ngày tạo: <strong>{{ payment_request.created_at|date:"d/m/Y H:i" }}</strong></span>
+      <span>Quy trình: <strong>Phê duyệt thanh toán nội bộ</strong></span>
+      <span>Phiên bản: <strong>V{{ current_revision.revision_number }}</strong></span>
+    </div>
   </div>
   {% if payment_request.status == "DRAFT" %}<span class="status status-draft status-lg">Bản nháp</span>
   {% elif payment_request.status == "PENDING_APPROVAL" %}<span class="status status-pending status-lg">Đang chờ duyệt · {{ active_approvals_count }}/2</span>
@@ -24,10 +33,23 @@
 
 <div class="detail-layout">
   <main class="detail-main">
-    <section class="payment-hero">
-      <span class="field-label">TỔNG GIÁ TRỊ THANH TOÁN</span>
-      <div class="hero-amount" id="snapshot-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ current_revision.amount_vnd }} <small>{{ current_revision.currency }}</small>{% endif %}</div>
-      <div class="hero-purpose" id="snapshot-purpose">{{ current_revision.purpose }}</div>
+    <section class="detail-card approval-document">
+      <h2>{% if current_role == "DIRECTOR" %}Giám đốc phê duyệt{% elif current_role == "CONTROLLER" %}Kiểm soát viên phê duyệt{% else %}Thông tin đề nghị thanh toán{% endif %}</h2>
+      <div class="document-fields">
+        <div><span>Mục đích chi tiền <b>*</b></span><strong id="snapshot-purpose">{{ current_revision.purpose }}</strong></div>
+        <div><span>Chi cho <b>*</b></span><strong>{% if current_role == "SECURITY_ADMIN" %}Thông tin đã ẩn{% else %}{{ current_revision.beneficiary_name_snapshot }}{% endif %}</strong></div>
+      </div>
+      <h3>Nội dung</h3>
+      <div class="payment-table-wrap">
+        <table class="payment-table">
+          <thead><tr><th>STT</th><th>Danh mục</th><th>Số lượng</th><th>Số tiền</th><th>Thành tiền</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>{{ current_revision.purpose }}</td><td>1</td><td>{% if current_role == "SECURITY_ADMIN" %}—{% else %}{{ current_revision.amount_vnd|vnd }}{% endif %}</td><td>{% if current_role == "SECURITY_ADMIN" %}—{% else %}{{ current_revision.amount_vnd|vnd }}{% endif %}</td></tr>
+          </tbody>
+          <tfoot><tr><th colspan="4">Tổng</th><th id="snapshot-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ current_revision.amount_vnd|vnd }} {{ current_revision.currency }}{% endif %}</th></tr></tfoot>
+        </table>
+      </div>
+      <div class="document-total"><span>Tổng tiền thanh toán</span><strong>{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ current_revision.amount_vnd|vnd }} {{ current_revision.currency }}{% endif %}</strong></div>
     </section>
 
     <section class="detail-card">
@@ -42,18 +64,44 @@
       </div>
     </section>
 
-    <section class="detail-card">
-      <div class="section-title"><div><span class="section-icon">✓</span><div><h2>Tiến độ phê duyệt</h2><p>Cần đủ hai cấp trước khi thực hiện</p></div></div><strong>{{ active_approvals_count }}/2</strong></div>
-      <div class="approval-timeline">
-        <div class="timeline-item {% if director_approval %}complete{% endif %}"><span class="timeline-dot">{% if director_approval %}✓{% else %}1{% endif %}</span><div><span>GIÁM ĐỐC</span><strong>{% if director_approval %}{{ director_approval.approver.display_name }}{% else %}Chờ phê duyệt{% endif %}</strong><p>{% if director_approval %}Đã duyệt lúc {{ director_approval.created_at|date:"H:i, d/m/Y" }}{% else %}Chưa có quyết định{% endif %}</p></div></div>
-        <div class="timeline-line {% if director_approval and controller_approval %}complete{% endif %}"></div>
-        <div class="timeline-item {% if controller_approval %}complete{% endif %}"><span class="timeline-dot">{% if controller_approval %}✓{% else %}2{% endif %}</span><div><span>KIỂM SOÁT VIÊN</span><strong>{% if controller_approval %}{{ controller_approval.approver.display_name }}{% else %}Chờ phê duyệt{% endif %}</strong><p>{% if controller_approval %}Đã duyệt lúc {{ controller_approval.created_at|date:"H:i, d/m/Y" }}{% else %}Chưa có quyết định{% endif %}</p></div></div>
-      </div>
-    </section>
-
     <section class="detail-card source-card">
       <div class="section-title"><div><span class="section-icon">⌁</span><div><h2>Nguồn đề nghị</h2><p>{{ current_revision.get_source_kind_display }}</p></div></div><span class="unverified-chip">Chưa xác minh độc lập</span></div>
       <blockquote id="snapshot-source-excerpt">{{ current_revision.source_excerpt|default:"Không có nội dung trích dẫn." }}</blockquote>
+    </section>
+
+    <section class="detail-card collaboration-card">
+      <div class="related-row">
+        <h2>Người liên quan</h2>
+        <div class="related-people">
+          <span class="person-chip"><b>{{ payment_request.requester.display_name|slice:":1" }}</b>{{ payment_request.requester.display_name }}</span>
+          {% if director_approval %}<span class="person-chip"><b>ĐQ</b>{{ director_approval.approver.display_name }}</span>{% endif %}
+          {% if controller_approval %}<span class="person-chip"><b>ĐP</b>{{ controller_approval.approver.display_name }}</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="activity-section">
+        <h2>Hoạt động</h2>
+        <div class="activity-tabs" role="tablist">
+          <span class="active">Tất cả</span><span>Bình luận</span><span>Nhật ký hoạt động</span>
+        </div>
+        <div class="comment-placeholder" title="Prototype hiện chưa lưu bình luận">
+          <span class="comment-avatar">{{ request.user.display_name|slice:":1" }}</span>
+          <span>Trao đổi nghiệp vụ được thực hiện ngoài prototype; nhật ký hệ thống hiển thị bên dưới.</span>
+        </div>
+        <div class="activity-feed">
+          {% for event in activity_events %}
+          <article class="activity-entry">
+            <span class="activity-dot {% if event.result == 'DENIED' %}denied{% elif event.result == 'ERROR' %}error{% endif %}"></span>
+            <div>
+              <p><strong>{{ event.actor_username_snapshot|default:"Hệ thống" }}</strong> — {{ event.action|audit_action }}</p>
+              <small>{{ event.created_at|date:"d/m/Y H:i:s" }}{% if event.after_state %} · Trạng thái: {{ event.after_state|state_label }}{% endif %}</small>
+            </div>
+          </article>
+          {% empty %}
+          <p class="empty-activity">Chưa có hoạt động nào được ghi nhận.</p>
+          {% endfor %}
+        </div>
+      </div>
     </section>
 
     {% if execution %}
@@ -71,9 +119,34 @@
     {% if current_role == "DIRECTOR" or current_role == "CONTROLLER" %}
     <section class="action-card">
       <span class="field-label">QUYẾT ĐỊNH CỦA BẠN</span><h2>Xem xét yêu cầu</h2><p>Kiểm tra số tiền, người nhận và nội dung trước khi xác nhận.</p>
+      {% if current_role == "DIRECTOR" and director_approval %}
+      <div class="decision-complete"><span>✓</span><div><strong>Bạn đã phê duyệt</strong><small>{{ director_approval.created_at|date:"H:i, d/m/Y" }}</small></div></div>
+      {% elif current_role == "CONTROLLER" and controller_approval %}
+      <div class="decision-complete"><span>✓</span><div><strong>Bạn đã phê duyệt</strong><small>{{ controller_approval.created_at|date:"H:i, d/m/Y" }}</small></div></div>
+      {% elif payment_request.status == "REJECTED" %}
+      <div class="decision-complete rejected"><span>×</span><div><strong>Yêu cầu đã bị từ chối</strong><small>{{ payment_request.rejection_reason }}</small></div></div>
+      {% else %}
       <form method="post" action="/requests/{{ payment_request.id }}/challenges">{% csrf_token %}<input type="hidden" name="action" value="{% if current_role == 'DIRECTOR' %}APPROVE_DIRECTOR{% else %}APPROVE_CONTROLLER{% endif %}"><button type="submit" class="btn btn-success btn-block" id="btn-issue-approve-challenge">Phê duyệt yêu cầu</button></form>
       <form method="post" action="/requests/{{ payment_request.id }}/challenges" class="reject-form">{% csrf_token %}<input type="hidden" name="action" value="REJECT"><input type="text" name="reason" class="form-control" placeholder="Lý do từ chối"><button type="submit" class="btn btn-danger btn-block" id="btn-issue-reject-challenge">Từ chối</button></form>
-      {% for ch in open_challenges %}<div class="otp-panel"><span>MÃ XÁC NHẬN</span><p>Mã có hiệu lực đến {{ ch.expires_at|date:"H:i:s" }}</p>{% if ch.action == "REJECT" %}<form method="post" action="/requests/{{ payment_request.id }}/reject">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="hidden" name="reason" value="{{ ch.reason_text }}"><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-danger btn-block">Xác nhận từ chối</button></form>{% else %}<form method="post" action="/requests/{{ payment_request.id }}/approve">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-success btn-block">Xác nhận phê duyệt</button></form>{% endif %}</div>{% endfor %}
+      {% for ch in open_challenges %}
+      <div class="otp-modal-backdrop" data-otp-modal role="dialog" aria-modal="true" aria-labelledby="otp-modal-title-{{ ch.id }}">
+        <div class="otp-modal">
+          <button type="button" class="otp-modal-close" data-close-otp aria-label="Đóng">×</button>
+          <div class="otp-modal-icon">🔐</div>
+          <span class="field-label">XÁC THỰC THAO TÁC</span>
+          <h2 id="otp-modal-title-{{ ch.id }}">{% if ch.action == "REJECT" %}Xác nhận từ chối{% else %}Xác nhận phê duyệt{% endif %}</h2>
+          <p class="otp-modal-description">Mở ứng dụng Authenticator của tài khoản <strong>{{ request.user.username }}</strong> và nhập mã TOTP 6 số.</p>
+          <div class="otp-expiry">Mã thao tác có hiệu lực đến <strong>{{ ch.expires_at|date:"H:i:s" }}</strong></div>
+          {% if ch.action == "REJECT" %}
+          <form method="post" action="/requests/{{ payment_request.id }}/reject">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="hidden" name="reason" value="{{ ch.reason_text }}"><input type="text" name="otp_token" class="form-control otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" autofocus required><button class="btn btn-danger btn-block">Xác nhận từ chối</button></form>
+          {% else %}
+          <form method="post" action="/requests/{{ payment_request.id }}/approve">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="text" name="otp_token" class="form-control otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" autofocus required><button class="btn btn-success btn-block">Xác nhận phê duyệt</button></form>
+          {% endif %}
+          <p class="otp-security-note">Mã chỉ dùng một lần và được ràng buộc với yêu cầu này.</p>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
     </section>
     {% endif %}
 
@@ -81,10 +154,63 @@
     <section class="action-card">
       <span class="field-label">HÀNH ĐỘNG</span><h2>Quản lý yêu cầu</h2>
       {% if payment_request.status == "DRAFT" %}<form method="post" action="/requests/{{ payment_request.id }}/submit">{% csrf_token %}<button class="btn btn-primary btn-block" id="btn-submit-draft">Gửi phê duyệt</button></form>{% endif %}
-      {% if payment_request.status == "APPROVED" %}<form method="post" action="/requests/{{ payment_request.id }}/challenges">{% csrf_token %}<input type="hidden" name="action" value="EXECUTE"><button class="btn btn-primary btn-block" id="btn-issue-execute-challenge">Thực hiện thanh toán</button></form>{% for ch in open_challenges %}{% if ch.action == "EXECUTE" %}<form method="post" action="/requests/{{ payment_request.id }}/execute-simulated" id="execute-simulated-form" class="otp-panel">{% csrf_token %}<input type="hidden" name="challenge_id" value="{{ ch.id }}"><input type="hidden" name="nonce" value="{{ ch.nonce }}"><input type="hidden" name="idempotency_key" value="{{ suggested_idempotency_key }}"><label>Mã OTP xác nhận</label><input type="text" name="otp_token" class="form-control otp-input" maxlength="6" placeholder="000000" required><button class="btn btn-success btn-block" id="btn-execute-simulated">Xác nhận thực hiện</button></form>{% endif %}{% endfor %}{% endif %}
+      {% if payment_request.status == "APPROVED" %}
+        {% if not execute_challenge %}
+        <form method="post" action="/requests/{{ payment_request.id }}/challenges">{% csrf_token %}<input type="hidden" name="action" value="EXECUTE"><button class="btn btn-primary btn-block" id="btn-issue-execute-challenge">Thực hiện thanh toán</button></form>
+        {% else %}
+        <div class="otp-modal-backdrop" data-otp-modal role="dialog" aria-modal="true" aria-labelledby="execute-otp-title">
+          <div class="otp-modal">
+            <button type="button" class="otp-modal-close" data-close-otp aria-label="Đóng">×</button>
+            <div class="otp-modal-icon">🔐</div>
+            <span class="field-label">XÁC THỰC GIAO DỊCH</span>
+            <h2 id="execute-otp-title">Xác nhận thực hiện thanh toán</h2>
+            <p>Nhập mã 6 số đang hiển thị trong ứng dụng Authenticator của tài khoản này.</p>
+            <small class="otp-expiry">Mã xác nhận chỉ dùng một lần và có hiệu lực trong thời gian ngắn.</small>
+            <form method="post" action="/requests/{{ payment_request.id }}/execute-simulated" id="execute-simulated-form">{% csrf_token %}
+              <input type="hidden" name="challenge_id" value="{{ execute_challenge.id }}">
+              <input type="hidden" name="nonce" value="{{ execute_challenge.nonce }}">
+              <input type="hidden" name="idempotency_key" value="{{ suggested_idempotency_key }}">
+              <input type="text" name="otp_token" class="form-control otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" autofocus required>
+              <button class="btn btn-success btn-block" id="btn-execute-simulated">Xác nhận thực hiện</button>
+            </form>
+            <p class="otp-security-note">OTP được ràng buộc với đúng yêu cầu và phiên đăng nhập hiện tại.</p>
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
       {% if not payment_request.is_terminal %}<details class="edit-details"><summary>Chỉnh sửa yêu cầu</summary><form method="post" action="/requests/{{ payment_request.id }}/revise" id="revise-request-form">{% csrf_token %}<label>Người thụ hưởng</label><select name="beneficiary_version_id" class="form-control" required>{% for ver in verified_versions %}<option value="{{ ver.id }}" {% if ver.id == current_revision.beneficiary_version_id %}selected{% endif %}>{{ ver.vendor_name }} · {{ ver.account_number }}</option>{% endfor %}</select><label>Số tiền</label><input type="number" name="amount_vnd" class="form-control" value="{{ current_revision.amount_vnd }}" min="1" required><label>Nội dung</label><input type="text" name="purpose" class="form-control" value="{{ current_revision.purpose }}" required><input type="hidden" name="source_kind" value="{{ current_revision.source_kind }}"><textarea name="source_excerpt" class="form-control" rows="2">{{ current_revision.source_excerpt }}</textarea><label class="check-row"><input type="checkbox" name="submit_immediately" value="1"> Gửi duyệt ngay</label><button class="btn btn-warning btn-block" id="btn-revise-request">Lưu phiên bản mới</button></form></details><form method="post" action="/requests/{{ payment_request.id }}/cancel" class="cancel-form">{% csrf_token %}<button class="text-danger" id="btn-cancel-request">Hủy yêu cầu</button></form>{% endif %}
     </section>
     {% endif %}
   </aside>
+
+  <aside class="workflow-rail" aria-label="Các bước của quy trình">
+    <h2>BƯỚC</h2>
+    <div class="workflow-step complete">
+      <span class="workflow-node">✓</span><div class="workflow-avatar">VP</div>
+      <div><strong>Khởi tạo yêu cầu</strong><small>Nguyễn Văn Phú</small></div>
+    </div>
+    <div class="workflow-step {% if director_approval %}complete{% elif payment_request.status == 'PENDING_APPROVAL' %}active{% endif %}">
+      <span class="workflow-node">{% if director_approval %}✓{% else %}2{% endif %}</span><div class="workflow-avatar">ĐQ</div>
+      <div><strong>Giám đốc phê duyệt</strong><small>{% if director_approval %}Đã hoàn tất{% else %}Đang chờ Bùi Đắc Quí{% endif %}</small></div>
+    </div>
+    <div class="workflow-step {% if controller_approval %}complete{% elif director_approval %}active{% endif %}">
+      <span class="workflow-node">{% if controller_approval %}✓{% else %}3{% endif %}</span><div class="workflow-avatar">ĐP</div>
+      <div><strong>Kiểm soát phê duyệt</strong><small>{% if controller_approval %}Đã hoàn tất{% else %}Đang chờ Đoàn Phúc{% endif %}</small></div>
+    </div>
+    <div class="workflow-step {% if execution %}complete{% elif payment_request.status == 'APPROVED' %}active{% endif %}">
+      <span class="workflow-node">{% if execution %}✓{% else %}4{% endif %}</span><div class="workflow-avatar">VP</div>
+      <div><strong>Thực hiện mô phỏng</strong><small>{% if execution %}Đã hoàn tất{% else %}Chờ đủ điều kiện{% endif %}</small></div>
+    </div>
+  </aside>
 </div>
+<div id="live-update-notice" class="live-update-notice" hidden>Có cập nhật mới. Đang tải lại quy trình…</div>
+<script>
+  document.querySelectorAll("[data-otp-modal]").forEach((modal) => {
+    const close = () => { modal.hidden = true; };
+    modal.querySelector("[data-close-otp]")?.addEventListener("click", close);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) close();
+    });
+  });
+</script>
 {% endblock %}

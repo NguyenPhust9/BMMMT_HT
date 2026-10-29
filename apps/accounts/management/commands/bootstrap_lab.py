@@ -2,7 +2,7 @@
 Trusted offline bootstrap command `manage.py bootstrap_lab` (DES-01, DES-07, Section 7.1).
 - Ensures SecurityMutex(id=1) exists.
 - Safely resets ONLY securepay_lab demo tables when `--reset` is passed (checks database name).
-- Provisions fixed identities (lan, nam, huong, an, minh, nam_lookalike) with distinct person_ids,
+- Provisions fixed identities (vanphu, dacqui, doanphuc, ngocchau, minh, dacqui_lookalike) with distinct person_ids,
   non-superuser/non-staff flags, and confirmed TOTPDevices.
 - Seeds fictional beneficiaries (2 VERIFIED, 1 PENDING, 1 REVOKED).
 - Saves runtime demo credentials strictly to `private/demo_credentials.json` (git-ignored).
@@ -36,27 +36,27 @@ from apps.payments.models import (
 
 SEED_PRINCIPALS = [
     {
-        "username": "lan",
-        "person_id": "PER-LAN-001",
-        "display_name": "Lê Thị Lan (Kế toán)",
+        "username": "vanphu",
+        "person_id": "PER-VANPHU-001",
+        "display_name": "Nguyễn Văn Phú (Kế toán)",
         "role": Role.REQUESTER,
     },
     {
-        "username": "nam",
-        "person_id": "PER-NAM-002",
-        "display_name": "Nguyễn Văn Nam (Giám đốc)",
+        "username": "dacqui",
+        "person_id": "PER-DACQUI-002",
+        "display_name": "Bùi Đắc Quí (Giám đốc)",
         "role": Role.DIRECTOR,
     },
     {
-        "username": "huong",
-        "person_id": "PER-HUONG-003",
-        "display_name": "Trần Thu Hương (Kiểm soát viên)",
+        "username": "doanphuc",
+        "person_id": "PER-DOANPHUC-003",
+        "display_name": "Đoàn Phúc (Kiểm soát viên)",
         "role": Role.CONTROLLER,
     },
     {
-        "username": "an",
-        "person_id": "PER-AN-004",
-        "display_name": "Phạm Quốc An (Quản trị an ninh)",
+        "username": "ngocchau",
+        "person_id": "PER-NGOCCHAU-004",
+        "display_name": "Đặng Ngọc Châu (Quản trị an ninh)",
         "role": Role.SECURITY_ADMIN,
     },
     {
@@ -66,9 +66,9 @@ SEED_PRINCIPALS = [
         "role": Role.REQUESTER,
     },
     {
-        "username": "nam_lookalike",
+        "username": "dacqui_lookalike",
         "person_id": "PER-FAKE-006",
-        "display_name": "Nguyễn Văn Nam (Giám đốc)",
+        "display_name": "Bùi Đắc Quí (Giám đốc)",
         "role": Role.UNPRIVILEGED,
     },
 ]
@@ -81,7 +81,7 @@ SEED_BENEFICIARIES = [
         "account_number": "0011009988776",
         "verification_reference": "HĐKT-2026/SV-01 & Biên bản đối chiếu độc lập 2 người #BB-101",
         "status": BeneficiaryStatus.VERIFIED,
-        "verified_by_summary": "Đối chiếu độc lập bởi Nam (PER-NAM-002) & Hương (PER-HUONG-003)",
+        "verified_by_summary": "Đối chiếu độc lập bởi Quí (PER-DACQUI-002) & Phúc (PER-DOANPHUC-003)",
     },
     {
         "code": "BEN-002",
@@ -90,7 +90,7 @@ SEED_BENEFICIARIES = [
         "account_number": "1903887766554",
         "verification_reference": "HĐKT-2026/AD-02 & Biên bản đối chiếu độc lập 2 người #BB-102",
         "status": BeneficiaryStatus.VERIFIED,
-        "verified_by_summary": "Đối chiếu độc lập bởi Nam (PER-NAM-002) & Hương (PER-HUONG-003)",
+        "verified_by_summary": "Đối chiếu độc lập bởi Quí (PER-DACQUI-002) & Phúc (PER-DOANPHUC-003)",
     },
     {
         "code": "BEN-003",

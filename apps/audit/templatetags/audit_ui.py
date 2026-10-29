@@ -61,3 +61,11 @@ def state_label(value):
 @register.filter
 def role_label(value):
     return ROLE_LABELS.get(value, value or "")
+
+@register.filter
+def vnd(value):
+    """Format an integer using Vietnamese thousands separators."""
+    try:
+        return f"{int(value):,}".replace(",", ".")
+    except (TypeError, ValueError):
+        return value

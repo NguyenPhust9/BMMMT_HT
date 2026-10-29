@@ -12,10 +12,10 @@ Tài liệu này hướng dẫn từng bước trình diễn trực tiếp trên
    .\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
    ```
 2. Mở tệp cục bộ `private/demo_credentials.json` trên máy trình chiếu (không chiếu tệp này lên màn hình chung) để lấy mật khẩu và cấu hình TOTP cho 4 cửa sổ trình duyệt ẩn danh độc lập (tách biệt cookie phiên):
-   - **Cửa sổ 1**: `lan` (`REQUESTER` — Người lập yêu cầu)
-   - **Cửa sổ 2**: `nam` (`DIRECTOR` — Người duyệt 1)
-   - **Cửa sổ 3**: `huong` (`CONTROLLER` — Người duyệt 2)
-   - **Cửa sổ 4**: `an` (`SECURITY_ADMIN` — Quản trị an ninh) / `nam_fake` (Tài khoản trùng tên sếp)
+   - **Cửa sổ 1**: `vanphu` — Nguyễn Văn Phú (`REQUESTER` — Người lập yêu cầu)
+   - **Cửa sổ 2**: `dacqui` — Bùi Đắc Quí (`DIRECTOR` — Người duyệt 1)
+   - **Cửa sổ 3**: `doanphuc` — Đoàn Phúc (`CONTROLLER` — Người duyệt 2)
+   - **Cửa sổ 4**: `ngocchau` — Đặng Ngọc Châu (`SECURITY_ADMIN` — Quản trị an ninh) / `dacqui_lookalike` (Tài khoản trùng tên sếp)
 3. Để tái lập tự động toàn bộ 4 kịch bản và xuất lại ảnh chụp bằng chứng vào `evidence/demos/`:
    ```powershell
    .\.venv\Scripts\python.exe .\scripts\run_demos_and_capture.py

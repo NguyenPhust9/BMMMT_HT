@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}SecurePay{% endblock %}</title><link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}"><link rel="stylesheet" href="{% static 'css/securepay.css' %}"></head><body>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}SecurePay{% endblock %}</title><link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}"><link rel="stylesheet" href="{% static 'css/securepay.css' %}">{% block head_extra %}{% endblock %}</head><body>
 {% if is_full_mfa_authenticated %}
 <div class="app-shell"><aside class="app-sidebar">
   <a class="side-brand" href="/"><span class="brand-mark">S</span><span>SecurePay<small>INTERNAL PAYMENTS</small></span></a>
@@ -10,4 +10,47 @@
 {% endif %}
 {% if error_message %}<div class="alert alert-danger" id="server-error-banner"><strong>Không thể thực hiện:</strong> {{ error_message }}</div>{% endif %}
 {% block content %}{% endblock %}
+{% if request.GET.notice %}
+<div class="result-modal-backdrop" id="result-success-modal" role="dialog" aria-modal="true" aria-labelledby="result-modal-title">
+  <div class="result-modal">
+    <button type="button" class="result-modal-close" aria-label="Đóng">×</button>
+    <div class="result-success-icon">{% if request.GET.notice == "challenge_expired" %}↻{% else %}✓{% endif %}</div>
+    {% if request.GET.notice == "approved" %}
+      <h2 id="result-modal-title">Phê duyệt thành công</h2>
+      <p>Phiếu phê duyệt của bạn đã được ghi nhận và thanh quy trình đã được cập nhật.</p>
+    {% elif request.GET.notice == "rejected" %}
+      <h2 id="result-modal-title">Đã từ chối yêu cầu</h2>
+      <p>Quyết định từ chối đã được ghi nhận trong nhật ký kiểm toán.</p>
+    {% elif request.GET.notice == "executed" %}
+      <h2 id="result-modal-title">Thực hiện thành công</h2>
+      <p>Biên nhận mô phỏng đã được tạo; hệ thống không thực hiện chuyển tiền thật.</p>
+    {% elif request.GET.notice == "challenge_expired" %}
+      <h2 id="result-modal-title">Mã xác nhận đã hết hạn</h2>
+      <p>Không có giao dịch nào được thực hiện. Bạn có thể tạo mã xác nhận mới và tiếp tục ngay.</p>
+      <form method="post" action="/requests/{{ payment_request.id }}/challenges">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="EXECUTE">
+        <button type="submit" class="btn btn-primary btn-block">Tạo mã xác nhận mới</button>
+      </form>
+    {% endif %}
+    {% if request.GET.notice != "challenge_expired" %}<button type="button" class="btn btn-primary result-modal-ok">Đã hiểu</button>{% endif %}
+  </div>
+</div>
+<script>
+  (() => {
+    const modal = document.getElementById("result-success-modal");
+    if (!modal) return;
+    const close = () => {
+      modal.hidden = true;
+      const url = new URL(window.location.href);
+      url.searchParams.delete("notice");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+    };
+    modal.querySelector(".result-modal-close")?.addEventListener("click", close);
+    modal.querySelector(".result-modal-ok")?.addEventListener("click", close);
+    modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
+    {% if request.GET.notice != "challenge_expired" %}window.setTimeout(close, 4500);{% endif %}
+  })();
+</script>
+{% endif %}
 </main>{% if is_full_mfa_authenticated %}</div></div>{% endif %}</body></html>

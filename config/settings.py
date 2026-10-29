@@ -147,7 +147,7 @@ if HTTPS_PROFILE:
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Baseline Security Policy Settings (Section 3.1)
-CHALLENGE_TTL_SECONDS = int(os.environ.get("CHALLENGE_TTL_SECONDS", "120"))
+CHALLENGE_TTL_SECONDS = int(os.environ.get("CHALLENGE_TTL_SECONDS", "300"))
 REQUEST_TTL_HOURS = int(os.environ.get("REQUEST_TTL_HOURS", "24"))
 PREAUTH_TTL_SECONDS = int(os.environ.get("PREAUTH_TTL_SECONDS", "300"))
 SESSION_IDLE_TIMEOUT_SECONDS = int(os.environ.get("SESSION_IDLE_TIMEOUT_SECONDS", "1800"))

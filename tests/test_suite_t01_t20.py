@@ -354,12 +354,12 @@ class TestSuiteT01ToT20(TransactionTestCase):
         )
 
     def test_t05_lookalike_display_name_and_avatar_grant_no_authority(self) -> None:
-        """T-05: Account `nam_lookalike` with identical display_name to Director Nam has zero approval authority."""
+        """T-05: Account `dacqui_lookalike` with the Director's display name has zero approval authority."""
         lan_c = login_full_mfa_client("lan", self.creds["lan"]["password"])
-        fake_c = login_full_mfa_client("nam_lookalike", self.creds["nam_lookalike"]["password"])
+        fake_c = login_full_mfa_client("dacqui_lookalike", self.creds["dacqui_lookalike"]["password"])
 
         req_id = self._create_and_submit_r1(lan_c)
-        fake_user = self.lab["users"]["nam_lookalike"]
+        fake_user = self.lab["users"]["dacqui_lookalike"]
         real_nam = self.lab["users"]["nam"]
         self.assertEqual(fake_user.display_name, real_nam.display_name)
         self.assertEqual(fake_user.role, Role.UNPRIVILEGED)
@@ -377,12 +377,12 @@ class TestSuiteT01ToT20(TransactionTestCase):
             actor=fake_user, action="ISSUE_PAYMENT_CHALLENGE"
         ).order_by("-created_at").first()
         self.assertIsNotNone(audit_ev)
-        self.assertEqual(audit_ev.actor_username_snapshot, "nam_lookalike")
+        self.assertEqual(audit_ev.actor_username_snapshot, "dacqui_lookalike")
 
         write_test_evidence(
             "T-05",
             actual=(
-                f"Tai khoan nam_lookalike (display_name='{fake_user.display_name}', person_id='{fake_user.person_id}') "
+                f"Tai khoan dacqui_lookalike (display_name='{fake_user.display_name}', person_id='{fake_user.person_id}') "
                 f"xin challenge APPROVE_DIRECTOR bi HTTP {r_chal.status_code} ({r_chal.json()['reason_code']}); "
                 f"Approval count=0; AuditEvent ghi nhan actor={fake_user.username} ({fake_user.person_id})."
             ),

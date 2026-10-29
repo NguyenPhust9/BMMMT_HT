@@ -1,6 +1,7 @@
 """
 Reproducible runner for the 4 demonstration scenarios (D-01..D-04) and N=5 empirical trade-off measurements (M8).
-Executes against real PostgreSQL 17 with isolated sessions for Lan, Nam, Huong, An, and Nam_lookalike.
+Executes against real PostgreSQL 17 with isolated sessions for Van Phu, Dac Qui, Doan Phuc,
+Ngoc Chau, and DacQui_lookalike.
 Saves sanitized JSON traces, rendered HTML snapshots, and visual PNG evidence cards in `evidence/demos/`,
 and generates `docs/05_tradeoffs.md` with real measured timings and step counts.
 """
@@ -263,7 +264,7 @@ def run_demos() -> dict:
     lab = seed_standard_lab()
     creds = lab["creds"]
     lan_c = login_full_mfa_client("lan", creds["lan"]["password"])
-    fake_c = login_full_mfa_client("nam_lookalike", creds["nam_lookalike"]["password"])
+    fake_c = login_full_mfa_client("dacqui_lookalike", creds["dacqui_lookalike"]["password"])
     nam_c = login_full_mfa_client("nam", creds["nam"]["password"])
     huong_c = login_full_mfa_client("huong", creds["huong"]["password"])
 
@@ -284,7 +285,7 @@ def run_demos() -> dict:
     req2_id = r2_create.json()["request_id"]
     lan_c.post(f"/requests/{req2_id}/submit", HTTP_ACCEPT="application/json")
 
-    # Step 2: Lookalike account `nam_lookalike` tries to approve -> 403
+    # Step 2: Lookalike account `dacqui_lookalike` tries to approve -> 403
     r_fake_chal = fake_c.post(
         f"/requests/{req2_id}/challenges",
         data=json.dumps({"action": ChallengeAction.APPROVE_DIRECTOR}),
@@ -377,7 +378,7 @@ def run_demos() -> dict:
             (
                 "2. Kết quả chặn các bước tấn công",
                 [
-                    f"- Tài khoản trùng tên `nam_lookalike` xin quyền duyệt -> HTTP {r_fake_chal.status_code} ({r_fake_chal.json()['reason_code']})",
+                    f"- Tài khoản trùng tên `dacqui_lookalike` xin quyền duyệt -> HTTP {r_fake_chal.status_code} ({r_fake_chal.json()['reason_code']})",
                     f"- Phiên hậu đăng nhập nhưng thiếu OTP thao tác mới -> HTTP {r_stolen_sess.status_code}",
                     "- Giả định `nam` bị chiếm cả mật khẩu + MFA: chỉ tạo được 1 phiếu DIRECTOR",
                     f"- Kiểm soát viên `huong` độc lập từ chối -> Trạng thái {req2.status}; Lan thử execute -> HTTP {r_lan_try_exec.status_code}",
@@ -721,7 +722,7 @@ def run_demos() -> dict:
             HTTP_ACCEPT="application/json",
         )
 
-    lan_u = EmployeeIdentity.objects.get(username="lan")
+    lan_u = EmployeeIdentity.objects.get(username="vanphu")
     clock = StepClock()
     t_conc = clock.advance(90)
     chal_conc = issue_payment_challenge(

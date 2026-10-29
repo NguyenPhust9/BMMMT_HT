@@ -8,9 +8,10 @@ import uuid
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
 
 from apps.accounts.models import EmployeeIdentity, Role
-from apps.audit.models import AuditResult
+from apps.audit.models import AuditEvent, AuditResult
 from apps.audit.services import record_audit_event
 from apps.beneficiaries.models import BeneficiaryStatus, BeneficiaryVersion
 from apps.common.exceptions import ReasonCode, SecurityDomainError
@@ -23,6 +24,7 @@ from apps.common.http import (
 )
 from apps.payments.models import (
     ActionChallenge,
+    ChallengeAction,
     Approval,
     ApprovalSlot,
     ApprovalStatus,
@@ -164,7 +166,7 @@ def requests_list_or_create_view(request: HttpRequest) -> HttpResponse:
                     ],
                 }
             )
-        return render(
+        response = render(
             request,
             "payments/request_list.html",
             {
@@ -177,6 +179,11 @@ def requests_list_or_create_view(request: HttpRequest) -> HttpResponse:
                 "source_kinds": SourceKind.choices,
             },
         )
+        # Browser-level fallback for multi-account demos. This works even when
+        # JavaScript timers are throttled in background tabs.
+        response["Refresh"] = "2"
+        response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return response
 
     if request.method == "POST":
         try:
@@ -260,13 +267,23 @@ def request_detail_view(request: HttpRequest, request_id) -> HttpResponse:
         active_approvals = [a for a in approvals if a.status == ApprovalStatus.ACTIVE]
         active_by_slot = {a.slot: a for a in active_approvals}
         execution = PaymentExecution.objects.filter(payment_request=req).first()
+        activity_events = list(
+            AuditEvent.objects.filter(payment_request=req)
+            .select_related("actor")
+            .order_by("-created_at")[:20]
+        )
         open_challenges = list(
             ActionChallenge.objects.filter(
                 payment_request=req,
                 actor=actor,
                 consumed_at__isnull=True,
                 invalidated_at__isnull=True,
+                expires_at__gt=timezone.now(),
             ).order_by("-created_at")[:5]
+        )
+        execute_challenge = next(
+            (challenge for challenge in open_challenges if challenge.action == ChallengeAction.EXECUTE),
+            None,
         )
 
         if wants_json(request):
@@ -331,7 +348,7 @@ def request_detail_view(request: HttpRequest, request_id) -> HttpResponse:
             }
             return JsonResponse(payload)
 
-        return render(
+        response = render(
             request,
             "payments/request_detail.html",
             {
@@ -341,13 +358,19 @@ def request_detail_view(request: HttpRequest, request_id) -> HttpResponse:
                 "approvals": approvals,
                 "active_approvals": active_approvals,
                 "active_approvals_count": len(active_approvals),
+                "director_approval": active_by_slot.get(ApprovalSlot.DIRECTOR),
+                "controller_approval": active_by_slot.get(ApprovalSlot.CONTROLLER),
                 "execution": execution,
+                "activity_events": activity_events,
                 "open_challenges": open_challenges,
+                "execute_challenge": execute_challenge,
                 "verified_versions": _verified_beneficiary_versions(),
                 "source_kinds": SourceKind.choices,
                 "suggested_idempotency_key": f"idem-{req.request_code}-rev{rev.revision_number}",
             },
         )
+        response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return response
     except SecurityDomainError as err:
         return domain_error_response(request, err)
 
@@ -548,7 +571,7 @@ def approve_request_view(request: HttpRequest, request_id) -> HttpResponse:
             )
             resp["X-Reason-Code"] = ReasonCode.OK
             return resp
-        return redirect(f"/requests/{request_id}")
+        return redirect(f"/requests/{request_id}?notice=approved")
     except SecurityDomainError as err:
         return domain_error_response(request, err)
 
@@ -581,7 +604,7 @@ def reject_request_view(request: HttpRequest, request_id) -> HttpResponse:
             )
             resp["X-Reason-Code"] = ReasonCode.OK
             return resp
-        return redirect(f"/requests/{request_id}")
+        return redirect(f"/requests/{request_id}?notice=rejected")
     except SecurityDomainError as err:
         return domain_error_response(request, err)
 
@@ -630,8 +653,10 @@ def execute_simulated_view(request: HttpRequest, request_id) -> HttpResponse:
             )
             resp["X-Reason-Code"] = reason
             return resp
-        return redirect(f"/requests/{request_id}/receipt")
+        return redirect(f"/requests/{request_id}/receipt?notice=executed")
     except SecurityDomainError as err:
+        if err.reason_code == ReasonCode.CHALLENGE_EXPIRED and not wants_json(request):
+            return redirect(f"/requests/{request_id}?notice=challenge_expired")
         return domain_error_response(request, err)
 
 

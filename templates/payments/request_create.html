@@ -22,7 +22,20 @@
 
     <div class="form-group">
       <label for="id_amount_vnd">Số tiền (VND)</label>
-      <input type="number" name="amount_vnd" id="id_amount_vnd" class="form-control mono" min="1" max="1000000000000" step="1" required placeholder="Ví dụ: 20000000">
+      <input
+        type="text"
+        name="amount_vnd"
+        id="id_amount_vnd"
+        class="form-control mono"
+        inputmode="numeric"
+        autocomplete="off"
+        pattern="[0-9.]+"
+        maxlength="17"
+        required
+        aria-describedby="amount-vnd-help"
+        placeholder="Ví dụ: 20.000.000"
+      >
+      <small id="amount-vnd-help" class="form-text">Tự động định dạng theo VND, chỉ nhập số nguyên dương.</small>
     </div>
 
     <div class="form-group">
@@ -58,5 +71,40 @@
     <a href="/requests" class="btn btn-ghost">Hủy</a>
   </form>
 </div>
+
+<script>
+  (() => {
+    const form = document.getElementById("create-request-form");
+    const amountInput = document.getElementById("id_amount_vnd");
+    const maxAmount = 1000000000000;
+
+    const digitsOnly = (value) => value.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
+    const formatVnd = (digits) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    const validateAndFormat = () => {
+      const digits = digitsOnly(amountInput.value);
+      amountInput.value = formatVnd(digits);
+      amountInput.setCustomValidity("");
+
+      if (digits && Number(digits) > maxAmount) {
+        amountInput.setCustomValidity("Số tiền tối đa là 1.000.000.000.000 VND.");
+      }
+    };
+
+    amountInput.addEventListener("input", validateAndFormat);
+    amountInput.addEventListener("blur", validateAndFormat);
+
+    form.addEventListener("submit", (event) => {
+      validateAndFormat();
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        form.reportValidity();
+        return;
+      }
+      // Backend tiếp tục nhận số nguyên thuần để giữ nguyên kiểm tra bảo mật hiện có.
+      amountInput.value = digitsOnly(amountInput.value);
+    });
+  })();
+</script>
 {% endblock %}
 

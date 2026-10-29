@@ -1051,6 +1051,16 @@ def issue_payment_challenge(
             )
 
         device = get_confirmed_totp_device(actor, for_update=True)
+        # A user can have only one pending challenge for the same action and
+        # payment request. Reissuing replaces the old code instead of stacking
+        # multiple OTP forms/challenges in the UI.
+        ActionChallenge.objects.filter(
+            actor=actor,
+            payment_request=req,
+            action=action,
+            consumed_at__isnull=True,
+            invalidated_at__isnull=True,
+        ).update(invalidated_at=now)
         challenge = ActionChallenge.objects.create(
             nonce=secrets.token_urlsafe(32),
             actor=actor,
@@ -1201,7 +1211,7 @@ def _validate_and_consume_payment_challenge_under_lock(
         )
         raise SecurityDomainError(
             ReasonCode.CHALLENGE_EXPIRED,
-            "Challenge xác nhận đã hết hạn 120 giây theo giờ máy chủ.",
+            "Mã xác nhận đã hết hạn. Vui lòng tạo mã mới để tiếp tục.",
             status_code=409,
         )
 

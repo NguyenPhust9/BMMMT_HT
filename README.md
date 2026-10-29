@@ -26,7 +26,17 @@ Prototype nghiên cứu học phần **Bảo mật mạng máy tính và hệ th
 - **Python**: `3.13.x` (hoặc `>= 3.11`)
 - **Cơ sở dữ liệu**: **PostgreSQL 17** (tự động khởi tạo cụm cục bộ cô lập tại `private/pgdata` trên cổng `127.0.0.1:55432` hoặc chạy qua `docker compose up -d db`)
 
-### Các lệnh thiết lập và chạy trên Windows PowerShell
+### Chạy nhanh bằng 1 lệnh duy nhất
+
+```powershell
+# Tự động kích hoạt .venv, bật PostgreSQL 17, migrate, khởi tạo dữ liệu mẫu và chạy web tại http://127.0.0.1:8000
+python app.py
+
+# (Tùy chọn) Đặt lại toàn bộ dữ liệu demo về trạng thái ban đầu rồi khởi chạy
+python app.py --reset
+```
+
+### Các lệnh thiết lập và kiểm thử chi tiết trên Windows PowerShell
 
 ```powershell
 # 1. Thiết lập môi trường ảo, khởi chạy PostgreSQL 17 (cổng 55432), migrate và seed dữ liệu lab
@@ -53,12 +63,12 @@ Thông tin đăng nhập và mã TOTP khởi tạo cho từng phiên chạy đư
 
 | Tài khoản (`username`) | Họ tên hiển thị | Vai trò (`role`) | Mã định danh (`person_id`) | Ghi chú kiểm thử |
 |---|---|---|---|---|
-| `lan` | Nguyễn Thị Lan | `REQUESTER` | `PER-LAN-001` | Người lập yêu cầu & thực thi mô phỏng yêu cầu của mình |
+| `vanphu` | Nguyễn Văn Phú | `REQUESTER` | `PER-VANPHU-001` | Người lập yêu cầu & thực thi mô phỏng yêu cầu của mình |
 | `minh` | Lê Hoàng Minh | `REQUESTER` | `PER-MINH-005` | Người lập thứ hai để kiểm thử cô lập quyền sở hữu (`T-04`, `T-08`) |
-| `nam` | Trần Văn Nam | `DIRECTOR` | `PER-NAM-002` | Người duyệt độc lập 1 (Giám đốc) |
-| `huong` | Phạm Thu Hương | `CONTROLLER` | `PER-HUONG-003` | Người duyệt độc lập 2 (Kiểm soát viên tài chính) |
-| `an` | Phạm Quốc An (Quản trị an ninh) | `SECURITY_ADMIN` | `PER-AN-004` | Quản trị an ninh (`SUSPEND`/`REVOKE_ALL`, không có quyền tài chính) |
-| `nam_lookalike` | Nguyễn Văn Nam (Giám đốc) | `UNPRIVILEGED` | `PER-FAKE-006` | Tài khoản giả danh trùng tên hiển thị với Giám đốc Nam (`T-05`, `D-02`) |
+| `dacqui` | Bùi Đắc Quí | `DIRECTOR` | `PER-DACQUI-002` | Người duyệt độc lập 1 (Giám đốc) |
+| `doanphuc` | Đoàn Phúc | `CONTROLLER` | `PER-DOANPHUC-003` | Người duyệt độc lập 2 (Kiểm soát viên tài chính) |
+| `ngocchau` | Đặng Ngọc Châu (Quản trị an ninh) | `SECURITY_ADMIN` | `PER-NGOCCHAU-004` | Quản trị an ninh (`SUSPEND`/`REVOKE_ALL`, không có quyền tài chính) |
+| `dacqui_lookalike` | Bùi Đắc Quí (Giám đốc) | `UNPRIVILEGED` | `PER-FAKE-006` | Tài khoản giả danh trùng tên hiển thị với Giám đốc Quí (`T-05`, `D-02`) |
 
 ---
 

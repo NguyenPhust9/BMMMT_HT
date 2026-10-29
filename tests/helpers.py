@@ -24,6 +24,13 @@ from apps.common.models import SecurityMutex
 EVIDENCE_DIR = Path(settings.BASE_DIR) / "evidence"
 EVIDENCE_LOGS_DIR = EVIDENCE_DIR / "logs"
 
+DEMO_USERNAME_ALIASES = {
+    "lan": "vanphu",
+    "nam": "dacqui",
+    "huong": "doanphuc",
+    "an": "ngocchau",
+}
+
 
 def seed_standard_lab() -> dict[str, Any]:
     """
@@ -36,6 +43,11 @@ def seed_standard_lab() -> dict[str, Any]:
     creds = json.loads(creds_file.read_text(encoding="utf-8"))["principals"]
 
     users = {u.username: u for u in EmployeeIdentity.objects.all()}
+    # Preserve the logical keys used by the historical security test suite while
+    # the real demo login names remain the new Vietnamese usernames.
+    for old_name, new_name in DEMO_USERNAME_ALIASES.items():
+        creds[old_name] = creds[new_name]
+        users[old_name] = users[new_name]
     bens = {b.code: b for b in Beneficiary.objects.select_related("active_version").all()}
     return {
         "creds": creds,
@@ -102,6 +114,7 @@ def login_full_mfa_client(username: str, password: str, enforce_csrf: bool = Fal
     """
     Perform full 2-step login (Password -> TOTP MFA) using Django test Client.
     """
+    username = DEMO_USERNAME_ALIASES.get(username, username)
     client = Client(enforce_csrf_checks=enforce_csrf)
     user = EmployeeIdentity.objects.get(username=username)
 
