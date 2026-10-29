@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}SecurePay{% endblock %}</title><link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}"><link rel="stylesheet" href="{% static 'css/securepay.css' %}">{% block head_extra %}{% endblock %}</head><body>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#2463eb"><title>{% block title %}SecurePay{% endblock %}</title><link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}?v=1"><link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}"><link rel="stylesheet" href="{% static 'css/securepay.css' %}?v=receipt-2"><script src="{% static 'js/otp_boxes.js' %}?v=otp6-5" defer></script><script src="{% static 'js/money_format.js' %}?v=1" defer></script>{% block head_extra %}{% endblock %}</head><body>
 {% if is_full_mfa_authenticated %}
 <div class="app-shell"><aside class="app-sidebar">
   <a class="side-brand" href="/"><span class="brand-mark">S</span><span>SecurePay<small>INTERNAL PAYMENTS</small></span></a>

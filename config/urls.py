@@ -13,6 +13,7 @@ from apps.common import views as common_views
 urlpatterns = [
     path("", payment_views.home_redirect_view, name="home"),
     path("dashboard", common_views.dashboard_view, name="dashboard"),
+    path("workspace/invoices", common_views.invoices_view, name="invoices"),
     path("workspace/<slug:module>", common_views.module_placeholder_view, name="module_placeholder"),
     # Authentication & MFA
     path("auth/login", account_views.login_view, name="login"),

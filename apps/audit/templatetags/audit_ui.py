@@ -6,16 +6,29 @@ ACTION_LABELS = {
     "AUTH_LOGIN_PASSWORD": "Đăng nhập",
     "AUTH_LOGIN_PREAUTH": "Kiểm tra thông tin đăng nhập",
     "AUTH_LOGIN_PASSWORD_ONLY": "Đăng nhập thành công",
+    "AUTH_LOGIN_MFA": "Xác thực MFA thành công",
     "AUTH_LOGOUT": "Đăng xuất",
     "BENEFICIARY_PROPOSED": "Đề nghị người thụ hưởng",
     "BENEFICIARY_VERIFIED": "Xác minh người thụ hưởng",
     "BENEFICIARY_REJECTED": "Từ chối người thụ hưởng",
+    "BENEFICIARY_CHANGE_HOLD_REQUEST": "Tạm giữ yêu cầu do người thụ hưởng thay đổi",
+    "OFFLINE_BENEFICIARY_REVOKED": "Thu hồi người thụ hưởng ngoại tuyến",
+    "OFFLINE_BENEFICIARY_VERSION_CREATED": "Tạo phiên bản người thụ hưởng ngoại tuyến",
     "CREATE_PAYMENT_REQUEST": "Tạo yêu cầu thanh toán",
+    "EDIT_DRAFT_REQUEST": "Chỉnh sửa bản nháp",
+    "EDIT_PAYMENT_REQUEST": "Chỉnh sửa yêu cầu thanh toán",
+    "REVISE_PAYMENT_REQUEST": "Chỉnh sửa yêu cầu — tạo phiên bản mới",
     "SUBMIT_PAYMENT_REQUEST": "Gửi yêu cầu phê duyệt",
+    "CANCEL_PAYMENT_REQUEST": "Hủy yêu cầu thanh toán",
     "APPROVE_PAYMENT_REQUEST": "Phê duyệt yêu cầu",
     "REJECT_PAYMENT_REQUEST": "Từ chối yêu cầu",
     "EXECUTE_PAYMENT_REQUEST": "Thực hiện thanh toán",
+    "EXECUTE_PAYMENT_SIMULATED": "Thực hiện thanh toán mô phỏng",
     "ISSUE_PAYMENT_CHALLENGE": "Tạo mã xác nhận",
+    "ISSUE_SECURITY_CHALLENGE": "Tạo mã xác nhận an ninh",
+    "REQUEST_MOVED_TO_HOLD": "Chuyển yêu cầu sang trạng thái tạm giữ",
+    "OFFLINE_PRINCIPAL_RECOVERY": "Khôi phục tài khoản ngoại tuyến",
+    "VIEW_PAYMENT_REQUEST": "Xem yêu cầu thanh toán",
     "ACCESS_PROTECTED_ENDPOINT": "Truy cập chức năng bảo vệ",
 }
 
@@ -56,6 +69,9 @@ def reason_label(value):
 def state_label(value):
     if not value:
         return "—"
+    if ":Rev#" in str(value):
+        state, revision = str(value).split(":Rev#", 1)
+        return f"{STATE_LABELS.get(state, state)} · Phiên bản {revision}"
     return STATE_LABELS.get(value, str(value).replace("_", " ").capitalize())
 
 @register.filter

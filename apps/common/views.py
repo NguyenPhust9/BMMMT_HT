@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
+from apps.accounts.models import Role
 from apps.beneficiaries.models import Beneficiary, BeneficiaryStatus
 from apps.common.http import require_full_mfa
-from apps.payments.models import PaymentRequest, RequestStatus
+from apps.payments.models import PaymentExecution, PaymentRequest, RequestStatus
 
 
 @require_full_mfa
@@ -24,6 +26,34 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         "recent_requests": qs.select_related("requester", "current_revision").order_by("-updated_at")[:5],
     }
     return render(request, "common/dashboard.html", context)
+
+
+@require_full_mfa
+def invoices_view(request: HttpRequest) -> HttpResponse:
+    """List immutable simulated receipts as invoices, scoped by financial role."""
+    if request.user.role == Role.SECURITY_ADMIN:
+        return redirect("/security/users")
+
+    executions = PaymentExecution.objects.select_related(
+        "payment_request",
+        "payment_request__requester",
+        "payment_revision",
+        "executor",
+    )
+    if request.user.role == Role.REQUESTER:
+        executions = executions.filter(payment_request__requester=request.user)
+    elif request.user.role not in (Role.DIRECTOR, Role.CONTROLLER):
+        executions = executions.none()
+
+    executions = executions.order_by("-executed_at")
+    total_amount = executions.aggregate(total=Sum("amount_vnd"))["total"] or 0
+    context = {
+        "executions": executions,
+        "invoice_count": executions.count(),
+        "total_amount": total_amount,
+        "matched_count": executions.count(),
+    }
+    return render(request, "common/invoices.html", context)
 
 
 MODULES = {

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load audit_ui %}
+{% block title %}Hóa đơn — SecurePay{% endblock %}
+{% block breadcrumb %}Hóa đơn{% endblock %}
+{% block content %}
+<section class="page-heading invoice-heading">
+  <div>
+    <p class="eyebrow">QUẢN LÝ CHỨNG TỪ</p>
+    <h1>Hóa đơn</h1>
+    <p class="page-subtitle">Các biên nhận mô phỏng được liên kết tự động từ yêu cầu đã thực hiện.</p>
+  </div>
+  <a href="/requests" class="btn btn-primary"><i class="fa-regular fa-file-lines"></i> Xem yêu cầu</a>
+</section>
+
+<section class="stats-grid dashboard-stats">
+  <div class="stat-card"><span class="stat-icon blue"><i class="fa-solid fa-file-invoice-dollar"></i></span><div><span>Tổng hóa đơn</span><strong>{{ invoice_count }}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon violet"><i class="fa-solid fa-coins"></i></span><div><span>Tổng giá trị</span><strong class="invoice-total">{{ total_amount|vnd }} VND</strong></div></div>
+  <div class="stat-card"><span class="stat-icon green"><i class="fa-solid fa-link"></i></span><div><span>Đã liên kết yêu cầu</span><strong>{{ matched_count }}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon amber"><i class="fa-solid fa-flask"></i></span><div><span>Phạm vi</span><strong class="invoice-scope">Mô phỏng</strong></div></div>
+</section>
+
+<section class="data-card standard-data-card invoice-card">
+  <div class="module-toolbar invoice-toolbar">
+    <div><h2>Chứng từ đã ghi nhận</h2><p>Mỗi yêu cầu chỉ sinh tối đa một hóa đơn mô phỏng.</p></div>
+    <span class="invoice-note"><i class="fa-solid fa-circle-info"></i> Không chuyển tiền thật</span>
+  </div>
+  <div class="table-scroll">
+    <table class="invoice-table">
+      <thead><tr><th>Mã biên nhận</th><th>Yêu cầu</th><th>Người thụ hưởng</th><th>Thời gian</th><th>Giá trị</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+      <tbody>
+        {% for execution in executions %}
+        <tr>
+          <td><strong class="mono invoice-receipt">{{ execution.receipt_id }}</strong><small>Phiên bản {{ execution.payment_revision.revision_number }}</small></td>
+          <td><a href="/requests/{{ execution.payment_request.id }}" class="invoice-request-link">{{ execution.payment_request.request_code }}</a><small>{{ execution.payment_request.requester.display_name }}</small></td>
+          <td><strong>{{ execution.beneficiary_name_snapshot }}</strong><small>{{ execution.bank_name_snapshot }} · {{ execution.account_number_snapshot }}</small></td>
+          <td>{{ execution.executed_at|date:"d/m/Y" }}<small>{{ execution.executed_at|date:"H:i:s" }}</small></td>
+          <td><strong class="table-amount">{{ execution.amount_vnd|vnd }} {{ execution.currency }}</strong></td>
+          <td><span class="invoice-status"><i class="fa-solid fa-check"></i> Đã đối chiếu</span></td>
+          <td><a href="/requests/{{ execution.payment_request.id }}/receipt" class="btn btn-ghost invoice-action">Xem hóa đơn</a></td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="7"><div class="module-empty"><i class="fa-solid fa-file-invoice-dollar"></i><h3>Chưa có hóa đơn</h3><p>Hóa đơn sẽ xuất hiện khi một yêu cầu được thực hiện mô phỏng thành công.</p><a href="/requests" class="btn btn-primary">Xem yêu cầu thanh toán</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

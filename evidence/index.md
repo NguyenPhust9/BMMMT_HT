@@ -3,6 +3,7 @@
 - **Thời điểm cập nhật (UTC)**: `2026-10-24T13:12:43.612772+00:00`
 - **Môi trường thực thi**: `Windows-11-64bit; Python 3.13.5; Django 5.2.14; PostgreSQL 17.6 (127.0.0.1:55432)`
 - **Tổng số ca kiểm thử**: `40` (`PASS`: **40/40**)
+- **Bản 40 test case tiếng Việt dễ đọc**: [`evidence/test_cases_de_doc.md`](test_cases_de_doc.md)
 - **Bảng tổng hợp CSV**: [`evidence/test_results.csv`](test_results.csv)
 - **Nhật ký chạy Pytest đầy đủ**: [`evidence/logs/pytest_full_run.log`](logs/pytest_full_run.log)
 

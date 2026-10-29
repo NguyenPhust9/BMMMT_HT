@@ -5,7 +5,7 @@
 {% block content %}
 <span id="live-sync-marker" hidden>{{ payment_request.updated_at|date:"U.u" }}:{{ payment_request.status }}:{{ active_approvals_count }}:{% if activity_events %}{{ activity_events.0.id }}{% endif %}</span>
 <script src="/static/js/live_sync.js?v=4" defer></script>
-<a href="/requests" class="back-link">← Quay lại danh sách</a>
+<a href="/requests" class="back-link">Quay lại danh sách</a>
 
 <section class="detail-header workflow-header">
   <div>
@@ -94,7 +94,7 @@
             <span class="activity-dot {% if event.result == 'DENIED' %}denied{% elif event.result == 'ERROR' %}error{% endif %}"></span>
             <div>
               <p><strong>{{ event.actor_username_snapshot|default:"Hệ thống" }}</strong> — {{ event.action|audit_action }}</p>
-              <small>{{ event.created_at|date:"d/m/Y H:i:s" }}{% if event.after_state %} · Trạng thái: {{ event.after_state|state_label }}{% endif %}</small>
+              <small>{{ event.created_at|date:"d/m/Y H:i:s" }}{% if event.before_state and event.action == "REVISE_PAYMENT_REQUEST" %} · {{ event.before_state|state_label }} → {{ event.after_state|state_label }}{% elif event.after_state %} · Trạng thái: {{ event.after_state|state_label }}{% endif %}</small>
             </div>
           </article>
           {% empty %}
@@ -111,7 +111,7 @@
     <details class="detail-card technical-details">
       <summary>Thông tin kiểm soát và lịch sử phiên bản</summary>
       <div class="tech-grid"><div><span>Mã toàn vẹn SHA-256</span><code id="snapshot-digest">{{ current_revision.content_digest }}</code></div><div><span>Thời hạn phê duyệt</span><strong>{{ payment_request.expires_at|date:"H:i, d/m/Y"|default:"Chưa thiết lập" }}</strong></div></div>
-      <div class="history-list">{% for r in all_revisions %}<div><strong>Phiên bản {{ r.revision_number }}</strong><span>{{ r.amount_vnd }} VND · {{ r.created_at|date:"H:i, d/m/Y" }}</span></div>{% endfor %}</div>
+      <div class="history-list">{% for r in all_revisions %}<div><strong>Phiên bản {{ r.revision_number }}</strong><span>{{ r.amount_vnd|vnd }} VND · {{ r.created_at|date:"H:i, d/m/Y" }}</span></div>{% endfor %}</div>
     </details>
   </main>
 
@@ -178,7 +178,7 @@
         </div>
         {% endif %}
       {% endif %}
-      {% if not payment_request.is_terminal %}<details class="edit-details"><summary>Chỉnh sửa yêu cầu</summary><form method="post" action="/requests/{{ payment_request.id }}/revise" id="revise-request-form">{% csrf_token %}<label>Người thụ hưởng</label><select name="beneficiary_version_id" class="form-control" required>{% for ver in verified_versions %}<option value="{{ ver.id }}" {% if ver.id == current_revision.beneficiary_version_id %}selected{% endif %}>{{ ver.vendor_name }} · {{ ver.account_number }}</option>{% endfor %}</select><label>Số tiền</label><input type="number" name="amount_vnd" class="form-control" value="{{ current_revision.amount_vnd }}" min="1" required><label>Nội dung</label><input type="text" name="purpose" class="form-control" value="{{ current_revision.purpose }}" required><input type="hidden" name="source_kind" value="{{ current_revision.source_kind }}"><textarea name="source_excerpt" class="form-control" rows="2">{{ current_revision.source_excerpt }}</textarea><label class="check-row"><input type="checkbox" name="submit_immediately" value="1"> Gửi duyệt ngay</label><button class="btn btn-warning btn-block" id="btn-revise-request">Lưu phiên bản mới</button></form></details><form method="post" action="/requests/{{ payment_request.id }}/cancel" class="cancel-form">{% csrf_token %}<button class="text-danger" id="btn-cancel-request">Hủy yêu cầu</button></form>{% endif %}
+      {% if not payment_request.is_terminal %}<details class="edit-details"><summary><i class="fa-solid fa-pen-to-square"></i><span>Chỉnh sửa yêu cầu</span><i class="fa-solid fa-chevron-down edit-chevron"></i></summary><form method="post" action="/requests/{{ payment_request.id }}/revise" id="revise-request-form">{% csrf_token %}<label>Người thụ hưởng</label><select name="beneficiary_version_id" class="form-control" required>{% for ver in verified_versions %}<option value="{{ ver.id }}" {% if ver.id == current_revision.beneficiary_version_id %}selected{% endif %}>{{ ver.vendor_name }} · {{ ver.account_number }}</option>{% endfor %}</select><label>Số tiền</label><input type="number" name="amount_vnd" class="form-control" value="{{ current_revision.amount_vnd }}" min="1" required><label>Nội dung</label><input type="text" name="purpose" class="form-control" value="{{ current_revision.purpose }}" required><input type="hidden" name="source_kind" value="{{ current_revision.source_kind }}"><textarea name="source_excerpt" class="form-control" rows="2">{{ current_revision.source_excerpt }}</textarea><label class="check-row"><input type="checkbox" name="submit_immediately" value="1"> Gửi duyệt ngay</label><button class="btn btn-warning btn-block" id="btn-revise-request">Lưu phiên bản mới</button></form></details><form method="post" action="/requests/{{ payment_request.id }}/cancel" class="cancel-form">{% csrf_token %}<button class="text-danger" id="btn-cancel-request">Hủy yêu cầu</button></form>{% endif %}
     </section>
     {% endif %}
   </aside>

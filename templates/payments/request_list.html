@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load humanize %}
+{% extends "base.html" %}{% load humanize audit_ui %}
 {% block title %}Yêu cầu thanh toán — SecurePay{% endblock %}
 {% block head_extra %}<meta http-equiv="refresh" content="3">{% endblock %}
 {% block content %}
@@ -25,7 +25,7 @@
   <div class="table-scroll"><table class="requests-table"><colgroup><col class="col-code"><col class="col-amount"><col class="col-recipient"><col class="col-requester"><col class="col-updated"><col class="col-approval"><col class="col-status"><col class="col-actions"></colgroup><thead><tr><th>Mã yêu cầu</th><th>Số tiền</th><th>Người nhận</th><th>Người lập</th><th>Cập nhật</th><th>Tiến độ phê duyệt</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
   {% for item in request_items %}{% with req=item.request %}<tr class="{% if item.needs_my_approval %}priority-row{% endif %}">
     <td><a class="table-code" href="/requests/{{ req.id }}">{{ req.request_code }}</a><span class="table-revision">Phiên bản {{ req.current_revision.revision_number }}</span>{% if item.needs_my_approval %}<span class="needs-action">Cần xử lý</span>{% endif %}</td>
-    <td><strong class="table-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ req.current_revision.amount_vnd|intcomma }} VND{% endif %}</strong></td>
+<td><strong class="table-amount">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ req.current_revision.amount_vnd|vnd }} VND{% endif %}</strong></td>
     <td class="recipient-cell">{% if current_role == "SECURITY_ADMIN" %}Đã ẩn{% else %}{{ req.current_revision.beneficiary_name_snapshot }}{% endif %}</td>
     <td>{{ req.requester.display_name }}</td><td>{{ req.updated_at|date:"d/m/Y" }}<br><span class="muted-text">{{ req.updated_at|date:"H:i" }}</span></td>
     <td class="approval-cell"><div class="approval-count">{{ item.active_count }}/2</div><div class="progress-track"><span style="width:{% if item.active_count == 2 %}100{% elif item.active_count == 1 %}50{% else %}0{% endif %}%"></span></div><div class="mini-approval {% if item.director_approval %}done{% endif %}"><i class="{% if item.director_approval %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i><span><b>Giám đốc</b><small>{% if item.director_approval %}{{ item.director_approval.approver.display_name }}<br>{{ item.director_approval.created_at|date:"d/m/Y H:i" }}{% else %}Chưa duyệt{% endif %}</small></span></div><div class="mini-approval {% if item.controller_approval %}done{% endif %}"><i class="{% if item.controller_approval %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i><span><b>Kiểm soát viên</b><small>{% if item.controller_approval %}{{ item.controller_approval.approver.display_name }}<br>{{ item.controller_approval.created_at|date:"d/m/Y H:i" }}{% else %}Chưa duyệt{% endif %}</small></span></div></td>
